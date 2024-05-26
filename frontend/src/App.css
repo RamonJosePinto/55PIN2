@@ -1,3 +1,17 @@
-body{
-    background-color: #F1F1F1;
+body {
+    background-color: #f1f1f1 !important;
+}
+
+* {
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+}
+
+a {
+    color: #9747ff;
+}
+
+p,
+div {
+    color: #7b7b7b;
 }

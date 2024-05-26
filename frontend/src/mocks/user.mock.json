@@ -1,0 +1,69 @@
+{
+    "name": "John Lennon Fan club",
+    "profilePicture": "src/assets/images/profile-pic.png",
+    "profileType": "Reviewer",
+    "followers": 55,
+    "following": 100,
+    "likes": 100,
+    "reviews": 82,
+    "comments": 82,
+    "reviewMedia": 82,
+    "exampleInfo1": "Example",
+    "exampleInfo2": "Example",
+    "exampleInfo3": "Example",
+    "exampleInfo4": "Example",
+    "albums": {
+        "mostRecent": [
+            {
+                "id": 1,
+                "title": "The Dark Side of the Moon",
+                "cover": "src/assets/images/music04.png",
+                "releaseDate": "01/01/99"
+            },
+            {
+                "id": 2,
+                "title": "Appetite for Destruction",
+                "cover": "src/assets/images/music01.png",
+                "releaseDate": "01/01/99"
+            },
+            {
+                "id": 3,
+                "title": "Rogério",
+                "cover": "src/assets/images/music02.png",
+                "releaseDate": "01/01/99"
+            },
+            {
+                "id": 4,
+                "title": "Chinese Democracy",
+                "cover": "src/assets/images/music03.png",
+                "releaseDate": "01/01/99"
+            }
+        ],
+        "topRated": [
+            {
+                "id": 5,
+                "title": "Thriller",
+                "cover": "src/assets/images/music03.png",
+                "releaseDate": "30/11/82"
+            },
+            {
+                "id": 6,
+                "title": "Back in Black",
+                "cover": "src/assets/images/music04.png",
+                "releaseDate": "25/07/80"
+            },
+            {
+                "id": 7,
+                "title": "The Beatles (White Album)",
+                "cover": "src/assets/images/music01.png",
+                "releaseDate": "22/11/68"
+            },
+            {
+                "id": 8,
+                "title": "Rumours",
+                "cover": "src/assets/images/music02.png",
+                "releaseDate": "04/02/77"
+            }
+        ]
+    }
+}
