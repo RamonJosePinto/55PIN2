@@ -1,0 +1,9 @@
+{
+    "fullName": "John Lennon",
+    "username": "johnlennon",
+    "email": "john@example.com",
+    "password": "password123",
+    "country": "UK",
+    "userType": "Reviewer",
+    "imageUrl": "src/assets/images/profile-pic.png"
+}

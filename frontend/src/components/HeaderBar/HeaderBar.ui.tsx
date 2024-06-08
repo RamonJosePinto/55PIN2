@@ -1,5 +1,4 @@
-import React from "react";
-import styled from "styled-components";
+import React, {useState} from "react";
 import NotificationBellIcon from "../../assets/icons/notification-icon.svg";
 import {
     Container,
@@ -14,8 +13,16 @@ import {
     SearchBar,
     TopBarContainer,
 } from "./HeaderBar.styles";
+import NotificationModal from "../Modals/Notification/NotificationModal.ui";
 
 const TopBar: React.FC = () => {
+    const [isNotificatioModalOpen, setIsNotificationModalOpen] =
+        useState(false);
+
+    const toggleNotificationModal = () => {
+        setIsNotificationModalOpen(!isNotificatioModalOpen);
+    };
+
     return (
         <TopBarContainer>
             <Container>
@@ -27,7 +34,10 @@ const TopBar: React.FC = () => {
                         <Menu>Seguidores</Menu>
                     </MenuContainer>
                     <ProfileNotificationContainer>
-                        <NotificationIcon src={NotificationBellIcon} />
+                        <NotificationIcon
+                            src={NotificationBellIcon}
+                            onClick={toggleNotificationModal}
+                        />
                         <ProfileContainer>
                             {/* TODO: adicionar de um arquivo mock o nome e a foto */}
                             <ProfilePicture
@@ -40,6 +50,10 @@ const TopBar: React.FC = () => {
                     </ProfileNotificationContainer>
                 </Row>
             </Container>
+            <NotificationModal
+                isOpen={isNotificatioModalOpen}
+                onClose={toggleNotificationModal}
+            />
         </TopBarContainer>
     );
 };

@@ -39,16 +39,26 @@ import {
 } from "./UserPage.styles";
 import mockData from "../../mocks/user.mock.json";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
+import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
     const [activeTab, setActiveTab] = useState("Albuns");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         setUserData(mockData);
     }, []);
 
     if (!userData) return <div>Loading...</div>;
+
+    const handleNotificationClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
 
     const settings = {
         dots: false,
@@ -124,7 +134,7 @@ const UserPage: React.FC = () => {
                                     Curtiu
                                 </UserStatsItem>
                             </UserStats>
-                            <UserInfoButton>
+                            <UserInfoButton onClick={handleNotificationClick}>
                                 <ButtonProfile>Editar perfil</ButtonProfile>
                                 <ButtonProfile>Editar foto</ButtonProfile>
                             </UserInfoButton>
@@ -262,6 +272,7 @@ const UserPage: React.FC = () => {
                     </CarouselItem>
                 </CarouselContainer>
             </Container>
+            <EditFormModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </>
     );
 };
