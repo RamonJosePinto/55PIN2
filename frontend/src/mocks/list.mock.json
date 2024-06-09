@@ -1,0 +1,57 @@
+{
+    "listName": "Mais Recentes",
+    "list": [
+        {
+            "id": 1,
+            "title": "The Dark Side of the Moon",
+            "cover": "src/assets/images/music04.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 2,
+            "title": "Appetite for Destruction",
+            "cover": "src/assets/images/music01.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 3,
+            "title": "Rogério",
+            "cover": "src/assets/images/music02.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 4,
+            "title": "Chinese Democracy",
+            "cover": "src/assets/images/music03.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 1,
+            "title": "The Dark Side of the Moon",
+            "cover": "src/assets/images/music04.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 2,
+            "title": "Appetite for Destruction",
+            "cover": "src/assets/images/music01.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 3,
+            "title": "Rogério",
+            "cover": "src/assets/images/music02.png",
+            "releaseDate": "01/01/99"
+        },
+        {
+            "id": 4,
+            "title": "Chinese Democracy",
+            "cover": "src/assets/images/music03.png",
+            "releaseDate": "01/01/99"
+        }
+    ],
+    "filtros": {
+        "genero": ["rock", "funk", "sertanejo", "pop"],
+        "anoLancamento": ["1998", "2024"]
+    }
+}
