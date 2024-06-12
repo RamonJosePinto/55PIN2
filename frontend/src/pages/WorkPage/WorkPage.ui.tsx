@@ -64,6 +64,7 @@ import reviews from "../../mocks/comments.mock.json";
 
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
+import ReviewModal from "../../components/Modals/Review/ReviewModal.ui";
 
 const WorkPage: React.FC = () => {
     const [WorkData, setWorkData] = useState<any>(null);
@@ -72,6 +73,15 @@ const WorkPage: React.FC = () => {
     const [expandedReviewIndex, setExpandedReviewIndex] = useState<
         number | null
     >(null);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+    const handleReviewClick = () => {
+        setIsReviewModalOpen(true);
+    };
+
+    const handleCloseReviewModal = () => {
+        setIsReviewModalOpen(false);
+    };
 
     const toggleComments = (index: number) => {
         setExpandedReviewIndex(expandedReviewIndex === index ? null : index);
@@ -122,8 +132,15 @@ const WorkPage: React.FC = () => {
                                     Curtidas
                                 </WorkStatsItem>
                             </WorkStats>
-                            <WorkInfoButton onClick={handleNotificationClick}>
-                                <ButtonProfile>Curtir</ButtonProfile>
+                            <WorkInfoButton>
+                                <ButtonProfile
+                                    onClick={handleNotificationClick}
+                                >
+                                    Curtir
+                                </ButtonProfile>
+                                <ButtonProfile onClick={handleReviewClick}>
+                                    Fazer Review
+                                </ButtonProfile>
                             </WorkInfoButton>
                         </WorkInfo>
                     </WorkProfile>
@@ -180,8 +197,8 @@ const WorkPage: React.FC = () => {
                         </CommentSectionTitle>
                         <CommentList>
                             {reviews.map((review, reviewIndex) => (
-                                <CoomentContainer>
-                                    <Comment key={reviewIndex}>
+                                <CoomentContainer key={reviewIndex}>
+                                    <Comment>
                                         <CommentHeader>
                                             <AuthorImage
                                                 src={review.imageUrl}
@@ -266,7 +283,15 @@ const WorkPage: React.FC = () => {
                     </CommentSection>
                 </CarouselContainer>
             </Container>
-            <EditFormModal isOpen={isModalOpen} onClose={handleCloseModal} />
+            {isReviewModalOpen && (
+                <ReviewModal onClose={handleCloseReviewModal} />
+            )}
+            {isModalOpen && (
+                <EditFormModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                />
+            )}
         </>
     );
 };

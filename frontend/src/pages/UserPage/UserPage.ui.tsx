@@ -40,11 +40,13 @@ import {
 import mockData from "../../mocks/user.mock.json";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
+import CreateWorkModal from "../../components/Modals/CreateWork/CreateWork.ui";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
     const [activeTab, setActiveTab] = useState("Albuns");
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isCreateWorkModalOpen, setIsCreateWorkModalOpen] = useState(false); // Novo estado
 
     useEffect(() => {
         setUserData(mockData);
@@ -52,12 +54,20 @@ const UserPage: React.FC = () => {
 
     if (!userData) return <div>Loading...</div>;
 
-    const handleNotificationClick = () => {
-        setIsModalOpen(true);
+    const handleEditNotificationClick = () => {
+        setIsEditModalOpen(true);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
+    const handleCloseEditModal = () => {
+        setIsEditModalOpen(false);
+    };
+
+    const handleCreateWorkClick = () => {
+        setIsCreateWorkModalOpen(true);
+    };
+
+    const handleCloseCreateWorkModal = () => {
+        setIsCreateWorkModalOpen(false);
     };
 
     const settings = {
@@ -134,9 +144,15 @@ const UserPage: React.FC = () => {
                                     Curtiu
                                 </UserStatsItem>
                             </UserStats>
-                            <UserInfoButton onClick={handleNotificationClick}>
-                                <ButtonProfile>Editar perfil</ButtonProfile>
-                                <ButtonProfile>Editar foto</ButtonProfile>
+                            <UserInfoButton>
+                                <ButtonProfile
+                                    onClick={handleEditNotificationClick}
+                                >
+                                    Editar perfil
+                                </ButtonProfile>
+                                <ButtonProfile onClick={handleCreateWorkClick}>
+                                    Criar Obra
+                                </ButtonProfile>
                             </UserInfoButton>
                         </UserInfo>
                     </UserProfile>
@@ -272,7 +288,14 @@ const UserPage: React.FC = () => {
                     </CarouselItem>
                 </CarouselContainer>
             </Container>
-            <EditFormModal isOpen={isModalOpen} onClose={handleCloseModal} />
+            <EditFormModal
+                isOpen={isEditModalOpen}
+                onClose={handleCloseEditModal}
+            />
+            <CreateWorkModal
+                isOpen={isCreateWorkModalOpen}
+                onClose={handleCloseCreateWorkModal}
+            />
         </>
     );
 };
