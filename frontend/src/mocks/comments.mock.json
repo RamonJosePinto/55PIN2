@@ -1,0 +1,46 @@
+[
+    {
+        "author": "Guilherme Furlan Nunes",
+        "date": "23/04/24",
+        "time": "16:40",
+        "body": "Industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500..",
+        "likes": 55,
+        "imageUrl": "src/assets/images/profile-pic2.png",
+        "comments": [
+            {
+                "author": "Jane Doe",
+                "date": "23/04/24",
+                "time": "18:00",
+                "body": "I completely agree with this review.",
+                "likes": 10,
+                "imageUrl": "src/assets/images/profile-pic2.png"
+            }
+        ]
+    },
+    {
+        "author": "Jane Doe",
+        "date": "22/04/24",
+        "time": "14:30",
+        "body": "Great album! I really enjoyed listening to it.",
+        "likes": 34,
+        "imageUrl": "src/assets/images/profile-pic2.png"
+    },
+    {
+        "author": "John Smith",
+        "date": "21/04/24",
+        "time": "12:15",
+        "body": "A masterpiece of rock music. Highly recommended!",
+        "likes": 42,
+        "imageUrl": "src/assets/images/profile-pic2.png",
+        "comments": [
+            {
+                "author": "Alice Johnson",
+                "date": "21/04/24",
+                "time": "13:45",
+                "body": "This album changed my life!",
+                "likes": 15,
+                "imageUrl": "src/assets/images/profile-pic2.png"
+            }
+        ]
+    }
+]
