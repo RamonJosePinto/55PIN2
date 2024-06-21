@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import TopBar from "../../components/HeaderBar/HeaderBar.ui";
 import {
     Container,
@@ -41,16 +41,38 @@ import mockData from "../../mocks/user.mock.json";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
 import CreateWorkModal from "../../components/Modals/CreateWork/CreateWork.ui";
+import {UserContext} from "../../hooks/UserContext";
+import defaultAlbumImage from "../../assets/images/default-cover.png";
+import {
+    getUser,
+    getUserAlbuns,
+    postAlbum,
+    postUser,
+} from "../../api/ApiService";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
+    const [albumData, setAlbumData] = useState<any>([]);
     const [activeTab, setActiveTab] = useState("Albuns");
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateWorkModalOpen, setIsCreateWorkModalOpen] = useState(false); // Novo estado
+    const {user} = useContext(UserContext);
 
     useEffect(() => {
-        setUserData(mockData);
+        // setUserData(mockData);
+        getUser(user.id).then((res: any) => {
+            setUserData(res.data);
+        });
     }, []);
+
+    useEffect(() => {
+        getUserAlbuns(user.id).then((res: any) => {
+            setAlbumData(res.data);
+        });
+    }, [userData]);
+
+    console.log(userData);
+    console.log(albumData);
 
     if (!userData) return <div>Loading...</div>;
 
@@ -68,6 +90,21 @@ const UserPage: React.FC = () => {
 
     const handleCloseCreateWorkModal = () => {
         setIsCreateWorkModalOpen(false);
+    };
+
+    const handleCreateWork = (data: any) => {
+        const dataFormated = {
+            autores: [{id: userData.id}],
+            ...data,
+        };
+        console.log({dataFormated});
+        postAlbum(dataFormated)
+            .then(response => {
+                console.log("Album criado com sucesso", response);
+            })
+            .catch(error => {
+                console.error("Erro ao criar album", error);
+            });
     };
 
     const settings = {
@@ -120,9 +157,9 @@ const UserPage: React.FC = () => {
                             alt="Profile"
                         />
                         <UserInfo>
-                            <UserName>{userData?.name}</UserName>
+                            <UserName>{userData?.username}</UserName>
                             <UserType color={"#398ecc"}>
-                                {userData?.profileType}
+                                {userData?.tipo}
                             </UserType>
                             <UserStats>
                                 <UserStatsItem>
@@ -246,30 +283,30 @@ const UserPage: React.FC = () => {
                         </TabsList>
                     </TabsContainer>
                     <CarouselItem>
-                        <CarouselTitle>Mais Recentes</CarouselTitle>
+                        <CarouselTitle>Albuns do Usuario</CarouselTitle>
                         <CustomSlider {...settings}>
-                            {/* TODO: fazer o titulo vir pelo mock  */}
-                            {userData.albums.mostRecent.map(
-                                (album: any, index: number) => (
-                                    <div key={index}>
-                                        <AlbumImage
-                                            src={album.cover}
-                                            alt={album.title}
-                                        />
-                                        <AlbumTitle>{album.title}</AlbumTitle>
-                                        <AlbumDate>
-                                            {album.releaseDate}
-                                        </AlbumDate>
-                                    </div>
-                                )
-                            )}
+                            {albumData?.map((album: any, index: number) => (
+                                <div key={index}>
+                                    <AlbumImage
+                                        src={
+                                            album.urlImagemCapa ||
+                                            defaultAlbumImage
+                                        }
+                                        alt={album.titulo}
+                                    />
+                                    <AlbumTitle>{album.titulo}</AlbumTitle>
+                                    <AlbumDate>
+                                        {album.dataLancamento}
+                                    </AlbumDate>
+                                </div>
+                            ))}
                         </CustomSlider>
                     </CarouselItem>
 
-                    <CarouselItem>
+                    {/* <CarouselItem>
                         <CarouselTitle>Mais Avaliados</CarouselTitle>
                         <CustomSlider {...settings}>
-                            {/* TODO: fazer o titulo vir pelo mock  */}
+                          
                             {userData.albums.topRated.map(
                                 (album: any, index: number) => (
                                     <div key={index}>
@@ -285,7 +322,7 @@ const UserPage: React.FC = () => {
                                 )
                             )}
                         </CustomSlider>
-                    </CarouselItem>
+                    </CarouselItem> */}
                 </CarouselContainer>
             </Container>
             <EditFormModal
@@ -293,6 +330,7 @@ const UserPage: React.FC = () => {
                 onClose={handleCloseEditModal}
             />
             <CreateWorkModal
+                onCreate={handleCreateWork}
                 isOpen={isCreateWorkModalOpen}
                 onClose={handleCloseCreateWorkModal}
             />

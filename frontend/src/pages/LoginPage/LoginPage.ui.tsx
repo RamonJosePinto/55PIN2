@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext} from "react";
 import {useForm, SubmitHandler} from "react-hook-form";
 import {
     Container,
@@ -14,6 +14,7 @@ import {
     InputTitle,
     LinkRow,
 } from "./LoginPage.styles";
+import {UserContext} from "../../hooks/UserContext";
 
 interface IFormInput {
     email: string;
@@ -22,9 +23,15 @@ interface IFormInput {
 
 const LoginPage: React.FC = () => {
     const {register, handleSubmit} = useForm<IFormInput>();
+    const context = useContext(UserContext);
+
+    const {setUser} = context;
 
     const onSubmit: SubmitHandler<IFormInput> = data => {
-        console.log(data); //É aqui que vamos chamar a API
+        setUser({
+            name: "Ramon",
+            id: 1,
+        });
     };
 
     return (

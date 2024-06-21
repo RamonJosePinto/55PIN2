@@ -168,3 +168,28 @@ export const AddDiscographyButton = styled(OutlineButton)`
     width: fit-content;
     align-self: flex-end;
 `;
+
+export const TabsContainer = styled.div`
+    display: flex;
+    gap: 20px;
+    padding-bottom: 20px;
+    justify-content: center;
+`;
+
+export const TabsList = styled.div`
+    display: flex;
+    border: 1px solid #eaeaed;
+    border-radius: 50px;
+`;
+
+export const Tab = styled.div.attrs({})<{active: boolean}>`
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: ${props => (props.active ? "#EAEAED" : "transparent")};
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #9747ff;
+`;

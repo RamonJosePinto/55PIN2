@@ -157,6 +157,7 @@ export const ListSelect = styled.select`
     border-radius: 5px;
     color: #3b3643;
     padding: 0px 15px;
+    cursor: pointer;
 `;
 
 export const ListSelectOption = styled.option``;

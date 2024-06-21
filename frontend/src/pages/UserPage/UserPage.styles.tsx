@@ -115,7 +115,7 @@ export const DetailTitle = styled.h6`
     font-weight: 600;
 `;
 
-export const ButtonProfile = styled(OutlineButton)`
+export const ButtonProfile = styled(OutlineButton).attrs({})`
     font-weight: 600;
     padding: 0px 15px;
 `;
@@ -135,6 +135,7 @@ export const UserStatsNumber = styled.div`
 export const AlbumImage = styled.img`
     width: 100%;
     height: 100%;
+    border-radius: 10px;
 `;
 
 export const CarouselContainer = styled.div`

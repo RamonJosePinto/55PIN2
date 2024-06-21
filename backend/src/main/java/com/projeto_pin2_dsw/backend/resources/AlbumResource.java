@@ -34,6 +34,13 @@ public class AlbumResource {
     @Autowired
     private FaixaRepository faixaRepository;
     
+    @GetMapping
+    public ResponseEntity<List<Album>> getAllAlbums() {
+        List<Album> albums = albumRepository.findAll();
+        return ResponseEntity.ok().body(albums);
+    }
+    
+    
     @GetMapping("/{id}")
     public ResponseEntity<Album> getAlbum(@PathVariable int id) {
         Optional<Album> albumOptional = albumRepository.findById(id);
@@ -79,6 +86,7 @@ public class AlbumResource {
 
         return ResponseEntity.ok(savedAlbum);
     }
+    
     
 //    @PostMapping
 //    public void setAlbumCover() {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {useForm, SubmitHandler} from "react-hook-form";
 import {
     ModalBackground,
@@ -24,22 +24,35 @@ import closeIcon from "../../../assets/icons/icon-close.svg";
 interface AddDiscographyModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onAddDiscography: (discography: any) => void;
 }
 
 interface FormInputs {
-    name: string;
-    duration: string;
-    participation: string;
+    titulo: string;
+    numero: number;
+    segundos: number;
 }
 
 const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({
     isOpen,
     onClose,
+    onAddDiscography,
 }) => {
-    const {register, handleSubmit} = useForm<FormInputs>();
+    const {register, handleSubmit, reset} = useForm<FormInputs>();
+    const [discography, setDiscography] = useState<any[]>([]);
 
     const onSubmit: SubmitHandler<FormInputs> = data => {
-        console.log(data);
+        setDiscography([...discography, data]);
+        reset();
+    };
+
+    const handleConfirm = () => {
+        onAddDiscography(discography);
+        onClose();
+    };
+
+    const handleClose = () => {
+        reset();
         onClose();
     };
 
@@ -51,7 +64,7 @@ const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({
                 <ModalContent>
                     <HeaderModal>
                         <HeaderTitle>Adicionar Discografia</HeaderTitle>
-                        <CloseButton onClick={onClose}>
+                        <CloseButton onClick={handleClose}>
                             <CloseIcon src={closeIcon} />
                         </CloseButton>
                     </HeaderModal>
@@ -59,23 +72,25 @@ const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({
                         <InputRow>
                             <div style={{flex: 1}}>
                                 <FormGroup>
-                                    <FieldLabel>Nome</FieldLabel>
+                                    <FieldLabel>Título</FieldLabel>
                                     <InputForm
-                                        {...register("name", {required: true})}
-                                    />
-                                </FormGroup>
-                                <FormGroup>
-                                    <FieldLabel>Duração</FieldLabel>
-                                    <InputForm
-                                        {...register("duration", {
+                                        {...register("titulo", {
                                             required: true,
                                         })}
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <FieldLabel>Participação</FieldLabel>
+                                    <FieldLabel>Número</FieldLabel>
                                     <InputForm
-                                        {...register("participation", {
+                                        {...register("numero", {
+                                            required: true,
+                                        })}
+                                    />
+                                </FormGroup>
+                                <FormGroup>
+                                    <FieldLabel>Duração (Segundos)</FieldLabel>
+                                    <InputForm
+                                        {...register("segundos", {
                                             required: true,
                                         })}
                                     />
@@ -88,12 +103,19 @@ const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({
                             </ImageUploadContainer>
                         </InputRow>
                         <ButtonsRow>
-                            <ButtonConfirm>Confirmar</ButtonConfirm>
-                            <ButtonClose onClick={onClose}>
+                            <ButtonConfirm type="submit">
+                                Adicionar Faixa
+                            </ButtonConfirm>
+                            <ButtonClose type="button" onClick={handleClose}>
                                 Cancelar
                             </ButtonClose>
                         </ButtonsRow>
                     </FormContent>
+                    <ButtonsRow>
+                        <ButtonConfirm type="button" onClick={handleConfirm}>
+                            Confirmar
+                        </ButtonConfirm>
+                    </ButtonsRow>
                 </ModalContent>
             </ModalContainer>
         </ModalBackground>

@@ -1,12 +1,21 @@
 import styled from "styled-components";
 
-function OutlineButton({children, ...props}: {children: React.ReactNode}) {
+function OutlineButton({
+    children,
+    ...props
+}: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    type?: "button" | "submit" | "reset";
+}) {
     return <OutlinedButton {...props}>{children}</OutlinedButton>;
 }
 
 export default OutlineButton;
 
-export const OutlinedButton = styled.button.attrs({})`
+export const OutlinedButton = styled.button.attrs(props => ({
+    type: props.type || "button",
+}))`
     border: none;
     border-radius: 4px;
     cursor: pointer;

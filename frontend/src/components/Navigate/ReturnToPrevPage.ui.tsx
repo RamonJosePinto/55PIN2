@@ -13,4 +13,5 @@ export default ReturnToPrevPage;
 const BackToPrevPage = styled.a`
     color: #3b3643;
     text-decoration: none;
+    width: fit-content;
 `;

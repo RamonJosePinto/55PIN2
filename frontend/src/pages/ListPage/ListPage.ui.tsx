@@ -1,6 +1,4 @@
-// NewPage.ui.tsx
-
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Container,
     Header,
@@ -28,18 +26,27 @@ import {
     ItemInput,
     ItemLabel,
 } from "./ListPage.styles";
-import TopBar from "../../components/HeaderBar/HeaderBar.ui"; // Reutilizando a TopBar da UserPage
+import TopBar from "../../components/HeaderBar/HeaderBar.ui";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import iconDownSrc from "../../assets/icons/icon-select-down.svg";
 import iconUpSrc from "../../assets/icons/icon-select-up.svg";
-
+import defaultAlbumImage from "../../assets/images/default-cover.png";
 import mockAlbums from "../../mocks/list.mock.json";
+import {getAllAlbum} from "../../api/ApiService"; // Corrigido nome da função de API
 
 const ListPage = () => {
+    const [albums, setAlbums] = useState<any[]>([]);
     const [genreOpen, setGenreOpen] = useState(false);
     const [yearOpen, setYearOpen] = useState(false);
+    const [sortOrder, setSortOrder] = useState("Mais recentes");
 
-    function toggleFilter(filter: string) {
+    useEffect(() => {
+        getAllAlbum()
+            .then((res: any) => setAlbums(res.data))
+            .catch((res: any) => console.log(res));
+    }, []);
+
+    const toggleFilter = (filter: string) => {
         switch (filter) {
             case "genero":
                 setGenreOpen(!genreOpen);
@@ -47,29 +54,38 @@ const ListPage = () => {
             case "anoLancamento":
                 setYearOpen(!yearOpen);
                 break;
-
             default:
                 break;
         }
-    }
+    };
 
-    function checkFilterDisplay(filter: string) {
+    const checkFilterDisplay = (filter: string) => {
         switch (filter) {
             case "genero":
                 return genreOpen;
             case "anoLancamento":
                 return yearOpen;
-
             default:
                 break;
         }
-    }
+    };
 
     const filtrosList = Object.keys(mockAlbums.filtros);
-
-    console.log(filtrosList);
-
     const filtros: any = mockAlbums.filtros;
+
+    const sortedAlbums = [...albums].sort((a, b) => {
+        const dateA = new Date(a.dataLancamento);
+        const dateB = new Date(b.dataLancamento);
+        if (sortOrder === "Mais recentes") {
+            return dateB.getTime() - dateA.getTime();
+        } else {
+            return dateA.getTime() - dateB.getTime();
+        }
+    });
+
+    const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortOrder(event.target.value);
+    };
 
     return (
         <>
@@ -82,7 +98,7 @@ const ListPage = () => {
                             {filtrosList &&
                                 filtrosList.map(
                                     (filtro: any, index: number) => (
-                                        <FilterItem>
+                                        <FilterItem key={index}>
                                             <FilterTitle
                                                 onClick={() =>
                                                     toggleFilter(filtro)
@@ -104,7 +120,7 @@ const ListPage = () => {
                                                             item: any,
                                                             index: number
                                                         ) => (
-                                                            <Item>
+                                                            <Item key={index}>
                                                                 <ItemLabel
                                                                     filterFor={
                                                                         item
@@ -127,31 +143,35 @@ const ListPage = () => {
                     </FilterBlock>
                     <ListBlock>
                         <ListHeader>
-                            <ListTitle>{mockAlbums.listName}</ListTitle>
-                            <ListSelect>
-                                <ListSelectOption>
+                            <ListTitle>Todos Albuns</ListTitle>
+                            <ListSelect
+                                value={sortOrder}
+                                onChange={handleSortChange}
+                            >
+                                <ListSelectOption value="Mais recentes">
                                     Mais recentes
                                 </ListSelectOption>
-                                <ListSelectOption>
-                                    Mais curtidos
+                                <ListSelectOption value="Mais antigos">
+                                    Mais antigos
                                 </ListSelectOption>
                             </ListSelect>
                         </ListHeader>
                         <ListContent>
-                            {mockAlbums.list.map(
-                                (album: any, index: number) => (
-                                    <ListItem key={index}>
-                                        <AlbumImage
-                                            src={album.cover}
-                                            alt={album.title}
-                                        />
-                                        <AlbumTitle>{album.title}</AlbumTitle>
-                                        <AlbumDate>
-                                            {album.releaseDate}
-                                        </AlbumDate>
-                                    </ListItem>
-                                )
-                            )}
+                            {sortedAlbums.map((album: any, index: number) => (
+                                <ListItem key={index}>
+                                    <AlbumImage
+                                        src={
+                                            album.urlImagemCapa ||
+                                            defaultAlbumImage
+                                        }
+                                        alt={album.titulo}
+                                    />
+                                    <AlbumTitle>{album.titulo}</AlbumTitle>
+                                    <AlbumDate>
+                                        {album.dataLancamento}
+                                    </AlbumDate>
+                                </ListItem>
+                            ))}
                         </ListContent>
                     </ListBlock>
                 </Content>

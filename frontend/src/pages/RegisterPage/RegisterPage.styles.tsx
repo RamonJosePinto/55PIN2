@@ -144,3 +144,28 @@ export const ButtonsRow = styled.div.attrs({})`
     width: 100%;
     gap: 25px;
 `;
+
+export const ErrorMessage = styled.p`
+    color: red;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+`;
+
+export const Popup = styled.div`
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #29b56b;
+    padding: 10px 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+`;
+
+export const PopupMessage = styled.p`
+    color: #fff;
+    font-size: 16px;
+    margin: 0;
+`;
