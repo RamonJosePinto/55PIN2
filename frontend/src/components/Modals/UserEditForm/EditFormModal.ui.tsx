@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {useForm, SubmitHandler} from "react-hook-form";
 import {
     ModalBackground,
@@ -20,36 +20,60 @@ import {
     EditImage,
     ImageEditContainer,
     ActualUserImage,
+    TextAreaForm,
 } from "./EditFormModal.styles";
 
 import userDataMock from "../../../mocks/userData.mock.json";
 import closeIcon from "../../../assets/icons/icon-close.svg";
+import {getUser, putUser} from "../../../api/ApiService";
 
 interface EditFormModalProps {
     isOpen: boolean;
     onClose: () => void;
+    userData: any;
 }
 
 interface FormInputs {
-    fullName: string;
+    nome: string;
     username: string;
     email: string;
-    password: string;
-    country: string;
-    userType: string;
+    senha: string;
+    pais: string;
+    tipo: string;
+    biografia: string;
 }
 
-const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose}) => {
+const EditFormModal: React.FC<EditFormModalProps> = ({
+    isOpen,
+    onClose,
+    userData,
+}) => {
     const {register, handleSubmit, reset} = useForm<FormInputs>({
         defaultValues: userDataMock,
     });
 
+    const [userFormData, setUserFormData] = useState();
+
     React.useEffect(() => {
-        reset(userDataMock); // Reset form with mock data when modal opens
+        getUser(userData?.id)
+            .then(res => {
+                setUserFormData(res.data);
+                console.log(res);
+            })
+            .catch(err => console.log(err));
+
+        reset(userFormData); // Reset form with mock data when modal opens
     }, [reset, isOpen]);
 
     const onSubmit: SubmitHandler<FormInputs> = data => {
-        onClose();
+        // onClose();
+        console.log({data});
+        putUser(userData?.id, data)
+            .then(res => {
+                window.alert("Deu boa");
+                console.log(res);
+            })
+            .catch(err => console.log(err));
     };
 
     if (!isOpen) return null;
@@ -75,7 +99,7 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose}) => {
                             <FormGroup>
                                 <FieldLabel>Nome Completo</FieldLabel>
                                 <InputForm
-                                    {...register("fullName")}
+                                    {...register("nome")}
                                     type="text"
                                     placeholder="Nome completo"
                                 />
@@ -104,7 +128,7 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose}) => {
                             <FormGroup>
                                 <FieldLabel>Senha</FieldLabel>
                                 <InputForm
-                                    {...register("password")}
+                                    {...register("senha")}
                                     type="password"
                                     placeholder="Senha"
                                 />
@@ -115,18 +139,26 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose}) => {
                             <FormGroup>
                                 <FieldLabel>País de origem</FieldLabel>
                                 <InputForm
-                                    {...register("country")}
+                                    {...register("pais")}
                                     type="text"
                                     placeholder="País de origem"
                                 />
                             </FormGroup>
                             <FormGroup>
                                 <FieldLabel>Tipo de Usuario</FieldLabel>
-                                <SelectForm {...register("userType")}>
-                                    <option value="Reviewer">Reviewer</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="User">User</option>
+                                <SelectForm {...register("tipo")}>
+                                    <option value="REVIEWER">REVIEWER</option>
+                                    <option value="ARTISTA">ARTISTA</option>
                                 </SelectForm>
+                            </FormGroup>
+                        </InputRow>
+                        <InputRow>
+                            <FormGroup>
+                                <FieldLabel>Biografia</FieldLabel>
+                                <TextAreaForm
+                                    {...register("biografia")}
+                                    placeholder="Biografia"
+                                />
                             </FormGroup>
                         </InputRow>
                         <ButtonsRow>

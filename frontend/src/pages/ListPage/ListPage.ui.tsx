@@ -32,19 +32,31 @@ import iconDownSrc from "../../assets/icons/icon-select-down.svg";
 import iconUpSrc from "../../assets/icons/icon-select-up.svg";
 import defaultAlbumImage from "../../assets/images/default-cover.png";
 import mockAlbums from "../../mocks/list.mock.json";
-import {getAllAlbum} from "../../api/ApiService"; // Corrigido nome da função de API
+import {getAllAlbum, getSearchAlbums} from "../../api/ApiService"; // Corrigido nome da função de API
+import {useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 const ListPage = () => {
     const [albums, setAlbums] = useState<any[]>([]);
     const [genreOpen, setGenreOpen] = useState(false);
     const [yearOpen, setYearOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState("Mais recentes");
+    const {searchTerm} = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        getAllAlbum()
-            .then((res: any) => setAlbums(res.data))
-            .catch((res: any) => console.log(res));
-    }, []);
+        if (searchTerm) {
+            if (searchTerm === "todos-albuns") {
+                getAllAlbum()
+                    .then((res: any) => setAlbums(res.data))
+                    .catch((res: any) => console.log(res));
+            }
+            getSearchAlbums(searchTerm)
+                .then((res: any) => setAlbums(res.data))
+                .catch((err: any) => console.log(err));
+        } else {
+        }
+    }, [searchTerm]);
 
     const toggleFilter = (filter: string) => {
         switch (filter) {
@@ -143,7 +155,11 @@ const ListPage = () => {
                     </FilterBlock>
                     <ListBlock>
                         <ListHeader>
-                            <ListTitle>Todos Albuns</ListTitle>
+                            <ListTitle>
+                                {searchTerm === "todos-albuns"
+                                    ? "Todos Albuns"
+                                    : searchTerm}
+                            </ListTitle>
                             <ListSelect
                                 value={sortOrder}
                                 onChange={handleSortChange}
@@ -158,11 +174,17 @@ const ListPage = () => {
                         </ListHeader>
                         <ListContent>
                             {sortedAlbums.map((album: any, index: number) => (
-                                <ListItem key={index}>
+                                <ListItem
+                                    key={index}
+                                    onClick={() =>
+                                        navigate(`/obra/${album.id}`)
+                                    }
+                                >
                                     <AlbumImage
                                         src={
-                                            album.urlImagemCapa ||
-                                            defaultAlbumImage
+                                            album.urlImagemCapa
+                                                ? `/${album.urlImagemCapa}`
+                                                : defaultAlbumImage
                                         }
                                         alt={album.titulo}
                                     />

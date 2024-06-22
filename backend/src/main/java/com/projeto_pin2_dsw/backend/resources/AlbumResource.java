@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.projeto_pin2_dsw.backend.model.*;
 import com.projeto_pin2_dsw.backend.repository.AlbumRepository;
@@ -33,6 +34,12 @@ public class AlbumResource {
 
     @Autowired
     private FaixaRepository faixaRepository;
+    
+    @GetMapping("/search/{titulo}")
+    public ResponseEntity<List<Album>> searchAlbums(@PathVariable String titulo) {
+        List<Album> albums = albumRepository.findByTituloContaining(titulo);
+        return ResponseEntity.ok(albums);
+    }
     
     @GetMapping
     public ResponseEntity<List<Album>> getAllAlbums() {

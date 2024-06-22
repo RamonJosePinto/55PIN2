@@ -41,3 +41,19 @@ export const postPerformance = (performance: any) =>
         status: performance.status,
         autores: performance.autores,
     });
+
+export const putUser = (id: number, userData: any) =>
+    baseURL.put(`/users/${id}`, {
+        username: userData.username,
+        nome: userData.nome,
+        email: userData.email,
+        pais: userData.pais,
+        senha: userData.senha,
+        biografia: userData.biografia,
+        tipo: userData.tipo,
+    });
+
+export const getSearchAlbums = (title: string) =>
+    baseURL.get(`/albums/search/${title}`);
+
+export const getAlbumById = (id: string) => baseURL.get(`/albums/${id}`);

@@ -8,7 +8,7 @@ export const TopBarContainer = styled.div`
     padding: 10px 20px;
 `;
 
-export const Menu = styled.div`
+export const Menu = styled.div.attrs({})`
     font-weight: 500;
     cursor: pointer;
 `;
@@ -56,6 +56,7 @@ export const ProfileContainer = styled.div.attrs({})`
     display: flex;
     align-items: center;
     gap: 10px;
+    cursor: pointer;
 `;
 
 export const MenuContainer = styled.div.attrs({})`
@@ -70,4 +71,12 @@ export const Row = styled.div.attrs({
     display: flex;
     align-items: center;
     justify-content: space-between;
+`;
+
+export const SearchIconButton = styled.img.attrs({
+    className: "",
+})`
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
 `;

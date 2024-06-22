@@ -125,6 +125,7 @@ export const ListContent = styled.div`
 
 export const ListItem = styled.div`
     width: 22%;
+    cursor: pointer;
 `;
 export const FilterTitle = styled.div`
     display: flex;

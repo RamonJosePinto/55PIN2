@@ -326,6 +326,7 @@ const UserPage: React.FC = () => {
                 </CarouselContainer>
             </Container>
             <EditFormModal
+                userData={user}
                 isOpen={isEditModalOpen}
                 onClose={handleCloseEditModal}
             />

@@ -65,6 +65,8 @@ import reviews from "../../mocks/comments.mock.json";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
 import ReviewModal from "../../components/Modals/Review/ReviewModal.ui";
+import {useParams} from "react-router-dom";
+import {getAlbumById} from "../../api/ApiService";
 
 const WorkPage: React.FC = () => {
     const [WorkData, setWorkData] = useState<any>(null);
@@ -74,6 +76,7 @@ const WorkPage: React.FC = () => {
         number | null
     >(null);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const {id} = useParams();
 
     const handleReviewClick = () => {
         setIsReviewModalOpen(true);
@@ -88,7 +91,17 @@ const WorkPage: React.FC = () => {
     };
 
     useEffect(() => {
-        setWorkData(mockData);
+        if (id) {
+            getAlbumById(id)
+                .then(res => {
+                    setWorkData(res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        } else {
+            setWorkData(mockData);
+        }
     }, []);
 
     if (!WorkData) return <div>Loading...</div>;
@@ -114,9 +127,9 @@ const WorkPage: React.FC = () => {
                     <WorkProfile>
                         <WorkPicture src={WorkData.url} alt="Profile" />
                         <WorkInfo>
-                            <WorkName>{WorkData?.title}</WorkName>
+                            <WorkName>{WorkData?.titulo}</WorkName>
                             <WorkType color={"#398ecc"}>
-                                {WorkData?.workType}
+                                {WorkData?.tipo}
                             </WorkType>
                             <WorkStats>
                                 <WorkStatsItem>
@@ -151,22 +164,28 @@ const WorkPage: React.FC = () => {
                                 <DetailRow>
                                     {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Autor: </DetailInfo>
-                                    <DetailValue>{mockData.autor}</DetailValue>
+                                    <DetailValue>
+                                        {WorkData?.autores[0]?.username}
+                                    </DetailValue>
                                 </DetailRow>
                                 <DetailRow>
                                     {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Ano de Lançamento: </DetailInfo>
                                     <DetailValue>
-                                        {mockData.ano_de_lancamento}
+                                        {WorkData.dataLancamento}
                                     </DetailValue>
                                 </DetailRow>
                                 <DetailRow>
                                     {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>
-                                        Participações especiais:{" "}
+                                        {WorkData?.tipo == "EP"
+                                            ? "Quantidade de Faixas:"
+                                            : "Participações especiais:"}
                                     </DetailInfo>
                                     <DetailValue>
-                                        {mockData.participacoes_especiais}
+                                        {WorkData?.tipo == "EP"
+                                            ? WorkData?.faixas.length
+                                            : mockData.participacoes_especiais}
                                     </DetailValue>
                                 </DetailRow>
                                 <DetailRow>

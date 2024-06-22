@@ -19,6 +19,23 @@ public class UsuarioResource {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Usuario> updateUser(@PathVariable int id, @RequestBody Usuario updatedUser) {
+    	return usuarioRepository.findById(id)
+            .map(user -> {
+            	user.setUsername(updatedUser.getUsername());
+                user.setNome(updatedUser.getNome());
+                user.setEmail(updatedUser.getEmail());
+                user.setPais(updatedUser.getPais());
+                user.setSenha(updatedUser.getSenha());
+                user.setBiografia(updatedUser.getBiografia());
+                user.setTipo(updatedUser.getTipo());
+                Usuario savedUser = usuarioRepository.save(user);
+                return ResponseEntity.ok(savedUser);
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id) {

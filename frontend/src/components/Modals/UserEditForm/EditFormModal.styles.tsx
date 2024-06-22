@@ -169,3 +169,13 @@ export const ActualUserImage = styled.img`
     width: 100px;
     height: 100px;
 `;
+
+export const TextAreaForm = styled.textarea`
+    width: 100%;
+    height: 100px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    resize: vertical;
+`;

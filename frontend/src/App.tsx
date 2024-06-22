@@ -15,6 +15,8 @@ function App() {
                 <Route path="/meus-dados" element={<UserPage />} />
                 <Route path="/obra" element={<WorkPage />} />
                 <Route path="/lista" element={<ListPage />} />
+                <Route path="/list/:searchTerm?" element={<ListPage />} />
+                <Route path="/obra/:id?" element={<WorkPage />} />
             </Routes>
         </BrowserRouter>
     );
