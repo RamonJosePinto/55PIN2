@@ -6,11 +6,14 @@ package com.projeto_pin2_dsw.backend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.projeto_pin2_dsw.backend.model.Usuario;
+import java.util.Optional;
 
 /**
  *
  * @author guilh
  */
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+    
+    public Optional<Usuario> findByUsernameAndSenha(String username, String senha);
     
 }

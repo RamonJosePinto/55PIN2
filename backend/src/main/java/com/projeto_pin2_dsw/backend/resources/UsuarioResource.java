@@ -63,12 +63,25 @@ public class UsuarioResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
     }
     
+    @PostMapping("/login")
+    public void login(
+            @RequestHeader("Username") String username,
+            @RequestHeader("Password") String senha) 
+    {
+        Optional<Usuario> usuarioOp = usuarioRepository.findByUsernameAndSenha(username, senha);
+        if (!usuarioOp.isPresent())
+            System.out.println("Não achou");
+        else
+            System.out.println(" ");
+    }
+    
     // Future implementation for login feature
     // @PostMapping("/login")
     // public ResponseEntity<String> login(@RequestBody LoginBean login) {
     //     List<Sessao> sessao = sessaoRepository.findByUsername(login.getUsername());
     //     return ResponseEntity.ok(sessao.toString());
     // }
+    
     // @GetMapping("/{username}/login")
     // public ResponseEntity<String> teste(@PathVariable String username) {
     //     List<Sessao> sessao = sessaoRepository.findByUsername(username);

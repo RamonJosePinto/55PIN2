@@ -4,13 +4,12 @@
  */
 package com.projeto_pin2_dsw.backend.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -27,9 +26,9 @@ public class Sessao {
     @ManyToOne(targetEntity = Usuario.class)
     private Usuario usuario;
     
-    private Timestamp dataCriacao;    
+    private LocalDateTime dataCriacao;    
     
-    public Sessao(String id, Usuario usuario, Timestamp dataCriacao) {
+    public Sessao(String id, Usuario usuario, LocalDateTime dataCriacao) {
         this.id = id;
         this.usuario = usuario;
         this.dataCriacao = dataCriacao;
@@ -51,11 +50,11 @@ public class Sessao {
         this.usuario = usuario;
     }
 
-    public Timestamp getDataCriacao() {
+    public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
 
-    public void setDataCriacao(Timestamp dataCriacao) {
+    public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
