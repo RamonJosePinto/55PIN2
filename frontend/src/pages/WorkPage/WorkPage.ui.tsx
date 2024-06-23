@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import TopBar from "../../components/HeaderBar/HeaderBar.ui";
 import {
     Container,
@@ -6,39 +6,6 @@ import {
     WorkProfile,
     WorkDetails,
     WorkStats,
-    AlbumsSection,
-    Album,
-    WorkInfo,
-    WorkName,
-    WorkInfoButton,
-    WorkPicture,
-    ButtonProfile,
-    WorkType,
-    WorkStatsItem,
-    WorkStatsNumber,
-    FirstColumn,
-    SecondColumn,
-    DetailTitle,
-    DividerFull,
-    NormalDivider,
-    DetailTable,
-    DetailRow,
-    DetailInfo,
-    DetailValue,
-    AlbumImage,
-    CarouselContainer,
-    CustomSlider,
-    AlbumTitle,
-    CarouselTitle,
-    AlbumDate,
-    CarouselItem,
-    TabsContainer,
-    Tab,
-    ActiveTab,
-    TabsList,
-    PointsContainer,
-    PointValue,
-    PointLabel,
     CommentSection,
     CommentAuthor,
     CommentHeader,
@@ -57,26 +24,57 @@ import {
     LikeIcon,
     LikeIconCointainer,
     CoomentContainer,
+    WorkInfo,
+    WorkName,
+    WorkType,
+    WorkStatsItem,
+    WorkStatsNumber,
+    ButtonProfile,
+    WorkPicture,
+    DividerFull,
+    FirstColumn,
+    DetailTable,
+    DetailRow,
+    DetailInfo,
+    DetailValue,
+    SecondColumn,
+    PointsContainer,
+    PointValue,
+    PointLabel,
+    CarouselContainer,
+    LaunchCommentButton,
+    WorkInfoButton,
+    ReviewPoints,
+    ReviewNota,
+    ReviewNotaText,
 } from "./WorkPage.styles";
-import mockData from "../../mocks/work.mock.json";
 import likeIcon from "../../assets/icons/icon-like.svg";
-import reviews from "../../mocks/comments.mock.json";
-
+import {format} from "date-fns";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
-import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
 import ReviewModal from "../../components/Modals/Review/ReviewModal.ui";
+import CommentModal from "../../components/Modals/CommentModal/CommentModal.ui";
 import {useParams} from "react-router-dom";
-import {getAlbumById} from "../../api/ApiService";
+import {
+    getAlbumById,
+    getReviewByIdAlbum,
+    postComment,
+} from "../../api/ApiService";
+import {UserContext} from "../../hooks/UserContext";
 
 const WorkPage: React.FC = () => {
-    const [WorkData, setWorkData] = useState<any>(null);
+    const [workData, setWorkData] = useState<any>(null);
+    const [reviewData, setReviewData] = useState<any>([]);
     const [activeTab, setActiveTab] = useState("Albuns");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [expandedReviewIndex, setExpandedReviewIndex] = useState<
         number | null
     >(null);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [currentCommentReviewId, setCurrentCommentReviewId] = useState<
+        number | null
+    >(null);
     const {id} = useParams();
+    const {user} = useContext(UserContext);
 
     const handleReviewClick = () => {
         setIsReviewModalOpen(true);
@@ -84,6 +82,14 @@ const WorkPage: React.FC = () => {
 
     const handleCloseReviewModal = () => {
         setIsReviewModalOpen(false);
+    };
+
+    const handleCommentClick = (reviewId: number) => {
+        setCurrentCommentReviewId(reviewId);
+    };
+
+    const handleCloseCommentModal = () => {
+        setCurrentCommentReviewId(null);
     };
 
     const toggleComments = (index: number) => {
@@ -99,12 +105,19 @@ const WorkPage: React.FC = () => {
                 .catch(err => {
                     console.log(err);
                 });
-        } else {
-            setWorkData(mockData);
-        }
-    }, []);
 
-    if (!WorkData) return <div>Loading...</div>;
+            getReviewByIdAlbum(id)
+                .then(res => {
+                    setReviewData(res.data);
+                    console.log(res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    }, [id]);
+
+    if (!workData) return <div>Loading...</div>;
 
     const handleNotificationClick = () => {
         setIsModalOpen(true);
@@ -118,6 +131,20 @@ const WorkPage: React.FC = () => {
         setActiveTab(tabName);
     };
 
+    const formatDateTime = (timestamp: any) => {
+        const date = new Date(timestamp);
+        return format(date, "dd/MM/yyyy - HH:mm");
+    };
+
+    const calculateAverageScore = () => {
+        if (reviewData.length === 0) return "N/A";
+        const totalScore = reviewData.reduce(
+            (acc: number, review: any) => acc + review.nota,
+            0
+        );
+        return totalScore / reviewData.length;
+    };
+
     return (
         <>
             <TopBar />
@@ -125,22 +152,22 @@ const WorkPage: React.FC = () => {
                 <ReturnToPrevPage url="/" />
                 <WorkInfoContainer>
                     <WorkProfile>
-                        <WorkPicture src={WorkData.url} alt="Profile" />
+                        <WorkPicture src={workData.url} alt="Profile" />
                         <WorkInfo>
-                            <WorkName>{WorkData?.titulo}</WorkName>
+                            <WorkName>{workData?.titulo}</WorkName>
                             <WorkType color={"#398ecc"}>
-                                {WorkData?.tipo}
+                                {workData?.tipo}
                             </WorkType>
                             <WorkStats>
                                 <WorkStatsItem>
                                     <WorkStatsNumber>
-                                        {WorkData.reviews}
+                                        {reviewData?.length}
                                     </WorkStatsNumber>
                                     Reviews
                                 </WorkStatsItem>
                                 <WorkStatsItem>
                                     <WorkStatsNumber>
-                                        {WorkData.likes}
+                                        {workData.likes}
                                     </WorkStatsNumber>{" "}
                                     Curtidas
                                 </WorkStatsItem>
@@ -162,40 +189,34 @@ const WorkPage: React.FC = () => {
                         <FirstColumn>
                             <DetailTable>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Autor: </DetailInfo>
                                     <DetailValue>
-                                        {WorkData?.autores[0]?.username}
+                                        {workData?.autores[0]?.username}
                                     </DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Ano de Lançamento: </DetailInfo>
                                     <DetailValue>
-                                        {WorkData.dataLancamento}
+                                        {workData.dataLancamento}
                                     </DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>
-                                        {WorkData?.tipo == "EP"
+                                        {workData?.tipo === "EP"
                                             ? "Quantidade de Faixas:"
                                             : "Participações especiais:"}
                                     </DetailInfo>
                                     <DetailValue>
-                                        {WorkData?.tipo == "EP"
-                                            ? WorkData?.faixas.length
-                                            : mockData.participacoes_especiais}
+                                        {workData?.tipo === "EP"
+                                            ? workData?.faixas.length
+                                            : "N/A"}
                                     </DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>
                                         Participações especiais:{" "}
                                     </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.participacoes_especiais}
-                                    </DetailValue>
+                                    <DetailValue>{"N/A"}</DetailValue>
                                 </DetailRow>
                             </DetailTable>
                         </FirstColumn>
@@ -203,7 +224,7 @@ const WorkPage: React.FC = () => {
                     <DividerFull />
                     <SecondColumn>
                         <PointsContainer>
-                            <PointValue>{mockData.pontos}</PointValue>
+                            <PointValue>{calculateAverageScore()}</PointValue>
                             <PointLabel>Pontos</PointLabel>
                         </PointsContainer>
                     </SecondColumn>
@@ -212,105 +233,133 @@ const WorkPage: React.FC = () => {
                 <CarouselContainer>
                     <CommentSection>
                         <CommentSectionTitle>
-                            Reviews | {reviews.length} reviews realizadas
+                            Reviews | {reviewData?.length} reviews realizadas
                         </CommentSectionTitle>
                         <CommentList>
-                            {reviews.map((review, reviewIndex) => (
-                                <CoomentContainer key={reviewIndex}>
-                                    <Comment>
-                                        <CommentHeader>
-                                            <AuthorImage
-                                                src={review.imageUrl}
-                                            />
-                                            <CommentAuthorInfo>
-                                                <CommentAuthor>
-                                                    {review.author}
-                                                </CommentAuthor>
-                                                <CommentDate>{`${review.time} - ${review.date}`}</CommentDate>
-                                            </CommentAuthorInfo>
-                                            <LikeButton>
-                                                <LikeCount>
-                                                    {review.likes}
-                                                </LikeCount>
-                                                <LikeIconCointainer>
-                                                    <LikeIcon src={likeIcon} />
-                                                </LikeIconCointainer>
-                                            </LikeButton>
-                                        </CommentHeader>
-                                        <CommentBody>{review.body}</CommentBody>
-                                        <CommentButtonContainer>
-                                            {review.comments &&
-                                                review.comments.length > 0 && (
-                                                    <ToggleCommentsButton
-                                                        onClick={() =>
-                                                            toggleComments(
-                                                                reviewIndex
-                                                            )
-                                                        }
-                                                    >
-                                                        {expandedReviewIndex ===
-                                                        reviewIndex
-                                                            ? "Esconder comentários"
-                                                            : "Ver comentários"}
-                                                    </ToggleCommentsButton>
-                                                )}
-                                        </CommentButtonContainer>
-                                    </Comment>
-
-                                    {expandedReviewIndex === reviewIndex &&
-                                        review?.comments.map(
-                                            (comment, commentIndex) => (
-                                                <ReviewComment
-                                                    className="review-comment"
-                                                    key={commentIndex}
+                            {reviewData?.map(
+                                (review: any, reviewIndex: any) => (
+                                    <CoomentContainer key={reviewIndex}>
+                                        <Comment>
+                                            <CommentHeader>
+                                                <AuthorImage
+                                                    src={
+                                                        review.reviewer
+                                                            .imageUrl || ""
+                                                    }
+                                                />
+                                                <CommentAuthorInfo>
+                                                    <CommentAuthor>
+                                                        {review.reviewer.nome}
+                                                    </CommentAuthor>
+                                                    <CommentDate>{`${formatDateTime(
+                                                        review.dataHora
+                                                    )}`}</CommentDate>
+                                                </CommentAuthorInfo>
+                                                <ReviewPoints>
+                                                    <ReviewNota>
+                                                        {review.nota}
+                                                    </ReviewNota>
+                                                    <ReviewNotaText>
+                                                        Pontos
+                                                    </ReviewNotaText>
+                                                </ReviewPoints>
+                                            </CommentHeader>
+                                            <CommentBody>
+                                                {review.texto}
+                                            </CommentBody>
+                                            <CommentButtonContainer>
+                                                <LaunchCommentButton
+                                                    onClick={() =>
+                                                        handleCommentClick(
+                                                            review.id
+                                                        )
+                                                    }
                                                 >
-                                                    <CommentHeader>
-                                                        <AuthorImage
-                                                            src={
-                                                                comment.imageUrl
+                                                    Fazer Comentário
+                                                </LaunchCommentButton>
+                                                {review.comentarios &&
+                                                    review.comentarios.length >
+                                                        0 && (
+                                                        <ToggleCommentsButton
+                                                            onClick={() =>
+                                                                toggleComments(
+                                                                    reviewIndex
+                                                                )
                                                             }
-                                                        />
-                                                        <CommentAuthorInfo>
-                                                            <CommentAuthor>
-                                                                {comment.author}
-                                                            </CommentAuthor>
-                                                            <CommentDate>{`${comment.time} - ${comment.date}`}</CommentDate>
-                                                        </CommentAuthorInfo>
-                                                        <LikeButton>
-                                                            <LikeCount>
-                                                                {comment.likes}
-                                                            </LikeCount>
-                                                            <LikeIconCointainer>
-                                                                <LikeIcon
-                                                                    src={
-                                                                        likeIcon
-                                                                    }
-                                                                />
-                                                            </LikeIconCointainer>
-                                                        </LikeButton>
-                                                    </CommentHeader>
+                                                        >
+                                                            {expandedReviewIndex ===
+                                                            reviewIndex
+                                                                ? "Esconder comentários"
+                                                                : "Ver comentários"}
+                                                        </ToggleCommentsButton>
+                                                    )}
+                                                {currentCommentReviewId ===
+                                                    review.id && (
+                                                    <CommentModal
+                                                        onClose={
+                                                            handleCloseCommentModal
+                                                        }
+                                                        reviewId={review.id}
+                                                        userId={user.id}
+                                                    />
+                                                )}
+                                            </CommentButtonContainer>
+                                        </Comment>
 
-                                                    <CommentBody>
-                                                        {comment.body}
-                                                    </CommentBody>
-                                                </ReviewComment>
-                                            )
-                                        )}
-                                </CoomentContainer>
-                            ))}
+                                        {expandedReviewIndex === reviewIndex &&
+                                            review.comentarios.map(
+                                                (
+                                                    comment: any,
+                                                    commentIndex: any
+                                                ) => (
+                                                    <ReviewComment
+                                                        className="review-comment"
+                                                        key={commentIndex}
+                                                    >
+                                                        <CommentHeader>
+                                                            <AuthorImage
+                                                                src={
+                                                                    comment
+                                                                        .reviewer
+                                                                        ?.imageUrl ||
+                                                                    ""
+                                                                }
+                                                            />
+                                                            <CommentAuthorInfo>
+                                                                <CommentAuthor>
+                                                                    {
+                                                                        comment
+                                                                            .reviewer
+                                                                            ?.nome
+                                                                    }
+                                                                </CommentAuthor>
+                                                                <CommentDate>{`${formatDateTime(
+                                                                    comment.dataHora
+                                                                )}`}</CommentDate>
+                                                            </CommentAuthorInfo>
+                                                        </CommentHeader>
+
+                                                        <CommentBody>
+                                                            {comment.texto}
+                                                        </CommentBody>
+                                                    </ReviewComment>
+                                                )
+                                            )}
+                                    </CoomentContainer>
+                                )
+                            )}
                         </CommentList>
                     </CommentSection>
                 </CarouselContainer>
             </Container>
             {isReviewModalOpen && (
-                <ReviewModal onClose={handleCloseReviewModal} />
-            )}
-            {isModalOpen && (
-                <EditFormModal
-                    isOpen={isModalOpen}
-                    onClose={handleCloseModal}
+                <ReviewModal
+                    albumId={Number(id)}
+                    userId={user?.id}
+                    onClose={handleCloseReviewModal}
                 />
             )}
+            {isModalOpen && "Curtir"}
         </>
     );
 };

@@ -14,23 +14,64 @@ import {
     TextArea,
     CharacterCount,
     ButtonsRow,
+    NotaField,
+    NotaLabel,
+    NotaInput,
+    ErrorMessage,
 } from "./ReviewModal.styles";
 import closeIcon from "../../../assets/icons/icon-close.svg";
+import * as yup from "yup";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {postReview} from "../../../api/ApiService";
 
-const ReviewModal: React.FC<{onClose: () => void}> = ({onClose}) => {
-    const [reviewText, setReviewText] = useState("");
+interface FormInputs {
+    nota: number;
+    texto: string;
+}
+
+const ReviewModal: React.FC<{
+    onClose: () => void;
+    albumId: number;
+    userId: number;
+}> = ({onClose, albumId, userId}) => {
     const maxLength = 300;
 
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setReviewText(e.target.value);
-    };
+    const schema = yup.object().shape({
+        nota: yup
+            .number()
+            .typeError("Por favor, insira um número válido")
+            .min(0, "A nota deve ser pelo menos 0")
+            .max(100, "A nota deve ser no máximo 100")
+            .required("A nota é obrigatória"),
+        texto: yup
+            .string()
+            .required("O texto da review é obrigatório")
+            .min(100, "Deve ter um minimo de 100 caracteres")
+            .max(300, "Deve ter um máximo de 300 caracteres"),
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Lógica para enviar a review
-        console.log("Review enviada:", reviewText);
+    const {
+        register,
+        handleSubmit,
+        formState: {errors},
+        watch,
+    } = useForm<FormInputs>({
+        resolver: yupResolver(schema),
+    });
+
+    const onSubmit: SubmitHandler<FormInputs> = data => {
+        const dataFormatted = {
+            reviewer: userId,
+            obra: albumId,
+            ...data,
+        };
+        console.log({dataFormatted});
+        postReview(dataFormatted);
         onClose();
     };
+
+    const reviewText = watch("texto", "");
 
     return (
         <ModalBackground>
@@ -41,22 +82,30 @@ const ReviewModal: React.FC<{onClose: () => void}> = ({onClose}) => {
                         <CloseIcon src={closeIcon} alt="Fechar" />
                     </CloseButton>
                 </HeaderModal>
-                <FormContent onSubmit={handleSubmit}>
-                    <FormGroup>
-                        <FieldLabel htmlFor="review">Sua Review</FieldLabel>
-                        <TextArea
-                            id="review"
-                            value={reviewText}
-                            onChange={handleChange}
-                            maxLength={maxLength}
-                            rows={5}
+                <FormContent onSubmit={handleSubmit(onSubmit)}>
+                    <NotaField>
+                        <FieldLabel htmlFor="nota">Nota</FieldLabel>
+                        <NotaInput
+                            type="number"
+                            id="nota"
+                            {...register("nota")}
                         />
+                        {errors.nota && (
+                            <ErrorMessage>{errors.nota.message}</ErrorMessage>
+                        )}
+                    </NotaField>
+                    <FormGroup>
+                        <FieldLabel htmlFor="texto">Sua Review</FieldLabel>
+                        <TextArea id="texto" rows={5} {...register("texto")} />
+                        {errors.texto && (
+                            <ErrorMessage>{errors.texto.message}</ErrorMessage>
+                        )}
                         <CharacterCount>
                             {reviewText.length} / {maxLength}
                         </CharacterCount>
                     </FormGroup>
                     <ButtonsRow>
-                        <ButtonConfirm>Enviar</ButtonConfirm>
+                        <ButtonConfirm type="submit">Enviar</ButtonConfirm>
                         <ButtonClose onClick={onClose}>Cancelar</ButtonClose>
                     </ButtonsRow>
                 </FormContent>
