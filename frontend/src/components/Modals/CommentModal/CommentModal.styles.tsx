@@ -156,3 +156,9 @@ export const ErrorMessage = styled.p`
     margin: 0;
     font-weight: bold;
 `;
+
+export const ButtonsContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 35px;
+`;

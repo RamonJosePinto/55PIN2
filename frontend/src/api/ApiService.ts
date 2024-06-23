@@ -57,3 +57,22 @@ export const getSearchAlbums = (title: string) =>
     baseURL.get(`/albums/search/${title}`);
 
 export const getAlbumById = (id: string) => baseURL.get(`/albums/${id}`);
+
+export const postReview = (review: any) =>
+    baseURL.post(`/reviews`, {
+        texto: review.texto,
+        nota: review.nota,
+        obra: {id: review.obra},
+        reviewer: {id: review.reviewer},
+    });
+
+export const getReviewByIdAlbum = (albumId: string | undefined) =>
+    baseURL.get(`/reviews/album/${albumId}`);
+
+export const postComment = (comment: any) => {
+    return baseURL.post("/comentarios", {
+        texto: comment.texto,
+        reviewer: {id: comment.usuario},
+        review: {id: comment.review},
+    });
+};

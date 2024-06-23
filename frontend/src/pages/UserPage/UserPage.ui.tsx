@@ -49,6 +49,7 @@ import {
     postAlbum,
     postUser,
 } from "../../api/ApiService";
+import {useNavigate} from "react-router-dom";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -71,8 +72,7 @@ const UserPage: React.FC = () => {
         });
     }, [userData]);
 
-    console.log(userData);
-    console.log(albumData);
+    const navigate = useNavigate();
 
     if (!userData) return <div>Loading...</div>;
 
@@ -288,6 +288,9 @@ const UserPage: React.FC = () => {
                             {albumData?.map((album: any, index: number) => (
                                 <div key={index}>
                                     <AlbumImage
+                                        onClick={() =>
+                                            navigate(`/obra/${album.id}`)
+                                        }
                                         src={
                                             album.urlImagemCapa ||
                                             defaultAlbumImage

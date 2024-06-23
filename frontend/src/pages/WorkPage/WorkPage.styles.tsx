@@ -294,6 +294,7 @@ export const CommentDate = styled.div`
 export const CommentBody = styled.div`
     margin-top: 5px;
     color: #3b3643;
+    line-break: anywhere;
 `;
 
 export const LikeButton = styled.button`
@@ -316,13 +317,12 @@ export const ReviewComment = styled.div`
     border-radius: 10px;
 `;
 
-export const ToggleCommentsButton = styled(OutlineButton)`
-    margin-top: 5px;
-`;
+export const ToggleCommentsButton = styled(OutlineButton)``;
 
 export const CommentButtonContainer = styled.div`
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
+    margin-top: 20px;
 `;
 
 export const LikeIcon = styled.img`
@@ -345,4 +345,20 @@ export const CoomentContainer = styled.div`
     > .review-comment {
         margin-left: 30px;
     }
+`;
+
+export const LaunchCommentButton = styled(OutlineButton).attrs({})``;
+
+export const ReviewPoints = styled.div.attrs({})`
+    display: flex;
+    gap: 5px;
+`;
+
+export const ReviewNota = styled.div.attrs({})`
+    color: rgb(41, 181, 107);
+    font-size: 18px;
+`;
+
+export const ReviewNotaText = styled.div.attrs({})`
+    font-size: 18px;
 `;
