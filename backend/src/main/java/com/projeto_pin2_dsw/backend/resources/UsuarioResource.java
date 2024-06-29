@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import org.springframework.http.HttpStatusCode;
 
@@ -28,7 +29,7 @@ public class UsuarioResource {
     private SessaoRepository sessaoRepository;
     
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUser(@PathVariable int id, @RequestBody Usuario updatedUser) {
+    public ResponseEntity<Usuario> updateUser(@PathVariable Integer id, @RequestBody Usuario updatedUser) {
     	return usuarioRepository.findById(id)
             .map(user -> {
             	user.setUsername(updatedUser.getUsername());
@@ -104,6 +105,22 @@ public class UsuarioResource {
         // Nova sessão
         Sessao novaSessao = criarSessao(usuario);
         return ResponseEntity.ok(novaSessao);
+    }
+    
+    @PostMapping("/{id}/logout")
+    public ResponseEntity logout(@PathVariable int id) {
+        Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
+        if (!usuarioOp.isPresent()) return null;
+        
+        Usuario usuario = usuarioOp.get();
+        
+        List<Sessao> sessoes = sessaoRepository.findByUsername(usuario.getUsername());
+        for (Sessao s : sessoes) {
+            s.setValida(false);
+        }
+        
+        sessaoRepository.saveAll(sessoes);
+        return ResponseEntity.ok(null);
     }
     
     private Sessao criarSessao(Usuario usuario) {

@@ -24,7 +24,7 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getRequestURI();
-        if (path.equals("/users/login")) {
+        if ((path.equals("/users/login")) || (path.contains("logout"))) {
             return true;
         }
 
