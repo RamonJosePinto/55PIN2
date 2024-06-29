@@ -4,6 +4,8 @@
  */
 package com.projeto_pin2_dsw.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,12 +26,24 @@ public class Sessao {
     private String id;
     
     @ManyToOne(targetEntity = Usuario.class)
+    @JsonIgnore
     private Usuario usuario;
     
-    private LocalDateTime dataCriacao;    
+    private LocalDateTime dataCriacao;
     
-    public Sessao(String id, Usuario usuario, LocalDateTime dataCriacao) {
+    private boolean valida;
+
+    public Sessao() {
+    }
+    
+    public Sessao(String id, Usuario usuario, LocalDateTime dataCriacao, boolean valida) {
         this.id = id;
+        this.usuario = usuario;
+        this.dataCriacao = dataCriacao;
+        this.valida = valida;
+    }
+
+    public Sessao(Usuario usuario, LocalDateTime dataCriacao) {
         this.usuario = usuario;
         this.dataCriacao = dataCriacao;
     }
@@ -58,6 +72,14 @@ public class Sessao {
         this.dataCriacao = dataCriacao;
     }
 
+    public boolean isValida() {
+        return valida;
+    }
+
+    public void setValida(boolean valida) {
+        this.valida = valida;
+    }
+    
     @Override
     public String toString() {
         return "Sessao{" + "id=" + id + ", usuario=" + usuario + ", dataCriacao=" + dataCriacao + '}';
