@@ -11,7 +11,7 @@ baseURL.interceptors.request.use(
 
         // Adiciona o SessionId no cabeçalho, se disponível e se não for a requisição de login
         if (user && user.id && !config.url?.includes("/login")) {
-            config.headers["SessionId"] = user.id;
+            config.headers["Authorization"] = user.id;
         }
 
         return config;
@@ -21,7 +21,13 @@ baseURL.interceptors.request.use(
     }
 );
 
-export const getUser = (id: number) => baseURL.get(`/users/${id}`);
+export const getUser = (id: number) => baseURL.get(`/users/${id}`,         {
+    headers: {
+        Authorization: "id",
+        Teste: "teste"
+    },
+});
+
 export const getUserAlbuns = (id: number) => baseURL.get(`/users/${id}/albums`);
 export const postUser = (userData: any) =>
     baseURL.post(`/users`, {
@@ -105,8 +111,9 @@ export const login = (username: string, password: string) => {
         {},
         {
             headers: {
+                Authorization: "teste",
                 Username: username,
-                Password: password,
+                Password: password
             },
         }
     );

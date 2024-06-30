@@ -49,7 +49,8 @@ public class UsuarioResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id) {
+    //@PostMapping("/{id}")
+    public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id, @RequestHeader("Authorization") String auth) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isPresent()) {
             return ResponseEntity.ok(usuarioOptional.get());

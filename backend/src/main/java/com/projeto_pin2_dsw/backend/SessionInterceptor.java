@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 package com.projeto_pin2_dsw.backend;
 
@@ -24,12 +20,20 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        String path = request.getRequestURI();
-        if ((path.equals("/users/login")) || (path.contains("logout"))) {
+        
+//        String path = request.getRequestURI();
+//        if ((path.equals("/users/login")) || (path.contains("logout"))) {
+//            return true;
+//        }S
+
+        // Permitir requisições OPTIONS sem validação
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             return true;
         }
 
-        String sessionId = request.getHeader("SessionId");
+        String sessionId = request.getHeader("Authorization");
+        System.out.println("sessionId: " + sessionId);
+        
         if (sessionId == null || sessionId.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;

@@ -22,11 +22,15 @@ public class BackendApplication {
     public WebMvcConfigurer configCORS() {
         return new WebMvcConfigurer() {
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedMethods("*").allowedOrigins("http://localhost:5173");
+                registry.addMapping("/**")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOrigins("http://localhost:5173/")
+                        .allowedHeaders("*" /*"Content-Type", "SessionId", "Sessionid", "Username", "Password", "Teste", "Authorization"*/)
+                        ;
             }
             
             public void addInterceptors(InterceptorRegistry registry) {
-                registry.addInterceptor(sessionInterceptor).addPathPatterns("/**");
+                registry.addInterceptor(sessionInterceptor).addPathPatterns("/**").excludePathPatterns("/users/login");;
             }
             
         };
