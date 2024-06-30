@@ -64,7 +64,7 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
     const handleAlbumSubmit: SubmitHandler<AlbumFormInputs> = async data => {
         try {
             const authorNames = data.autores.split(",").map(name => name.trim());
-            const generosArray = data.genero.split(",").map(nome => nome.trim());
+            const generosArray = data.genero.split(",").map(nome => ({nome: nome.trim()}));
             const response = await validateAuthors(authorNames);
             const authorIds = response.data.map(author => ({id: author.id}));
             authorIds.push({id: user.usuario.id});
@@ -74,6 +74,7 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                 genero: generosArray,
                 faixas: discographies,
             };
+            console.log(dataFormatted);
             await postAlbum(dataFormatted);
             resetForms();
             onClose();

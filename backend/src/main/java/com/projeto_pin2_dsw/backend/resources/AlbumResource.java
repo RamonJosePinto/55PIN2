@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projeto_pin2_dsw.backend.model.*;
 import com.projeto_pin2_dsw.backend.repository.AlbumRepository;
 import com.projeto_pin2_dsw.backend.repository.FaixaRepository;
+import com.projeto_pin2_dsw.backend.repository.GeneroRepository;
 import com.projeto_pin2_dsw.backend.repository.UsuarioRepository;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,9 @@ public class AlbumResource {
 
     @Autowired
     private FaixaRepository faixaRepository;
+    
+    @Autowired
+    private GeneroRepository generoRepository;
     
     @GetMapping("/search/{titulo}")
     public ResponseEntity<List<Album>> searchAlbums(@PathVariable String titulo) {
@@ -78,6 +82,21 @@ public class AlbumResource {
             album.setAutores(autoresPersisted);
         }
         // else... bad request
+        
+       
+        Set<Genero> generos = album.getGenero();
+        if (generos != null) {
+            Set<Genero> generosPersisted = new HashSet<>();
+            for (Genero genero : generos) {
+                Optional<Genero> generoEncontrado = generoRepository.findByNome(genero.getNome());
+                if (generoEncontrado.isPresent()) {
+                    generosPersisted.add(generoEncontrado.get());
+                } else {
+                    generosPersisted.add(generoRepository.save(genero));
+                }
+            }
+            album.setGenero(generosPersisted);
+        }
         
         // Associa o álbum a cada faixa informada.
         List<Faixa> faixas = album.getFaixas();

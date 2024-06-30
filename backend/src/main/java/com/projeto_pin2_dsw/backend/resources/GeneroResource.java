@@ -16,7 +16,7 @@ import com.projeto_pin2_dsw.backend.model.Genero;
 import com.projeto_pin2_dsw.backend.repository.GeneroRepository;
 
 @RestController
-@RequestMapping("/gender")
+@RequestMapping("/genders")
 public class GeneroResource {
 	
 	@Autowired

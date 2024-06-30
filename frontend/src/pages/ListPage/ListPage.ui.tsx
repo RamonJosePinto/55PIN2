@@ -1,14 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
     Container,
-    Header,
     Content,
-    AlbumList,
-    AlbumItem,
-    AlbumImage,
-    AlbumTitle,
-    AlbumDate,
-    FilterBlock,
     ListBlock,
     FilterList,
     FilterItem,
@@ -25,19 +18,25 @@ import {
     IconUp,
     ItemInput,
     ItemLabel,
+    AlbumImage,
+    AlbumTitle,
+    AlbumDate,
+    FilterBlock,
 } from "./ListPage.styles";
 import TopBar from "../../components/HeaderBar/HeaderBar.ui";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import iconDownSrc from "../../assets/icons/icon-select-down.svg";
 import iconUpSrc from "../../assets/icons/icon-select-up.svg";
 import defaultAlbumImage from "../../assets/images/default-cover.png";
-import mockAlbums from "../../mocks/list.mock.json";
-import {getAllAlbum, getSearchAlbums} from "../../api/ApiService"; // Corrigido nome da função de API
+import {getAllAlbum, getSearchAlbums, getAllGenders} from "../../api/ApiService";
 import {useParams} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 
 const ListPage = () => {
     const [albums, setAlbums] = useState<any[]>([]);
+    const [originalAlbums, setOriginalAlbums] = useState<any[]>([]);
+    const [genres, setGenres] = useState<any[]>([]);
+    const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
     const [genreOpen, setGenreOpen] = useState(false);
     const [yearOpen, setYearOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState("Mais recentes");
@@ -45,18 +44,36 @@ const ListPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        fetchGenres();
         if (searchTerm) {
             if (searchTerm === "todos-albuns") {
                 getAllAlbum()
-                    .then((res: any) => setAlbums(res.data))
+                    .then((res: any) => {
+                        setAlbums(res.data);
+                        setOriginalAlbums(res.data);
+                    })
                     .catch((res: any) => console.log(res));
             }
             getSearchAlbums(searchTerm)
-                .then((res: any) => setAlbums(res.data))
+                .then((res: any) => {
+                    setAlbums(res.data);
+                    setOriginalAlbums(res.data);
+                })
                 .catch((err: any) => console.log(err));
         } else {
+            getAllAlbum()
+                .then((res: any) => {
+                    setAlbums(res.data);
+                    setOriginalAlbums(res.data);
+                })
+                .catch((err: any) => console.log(err));
         }
     }, [searchTerm]);
+
+    const fetchGenres = async () => {
+        const response = await getAllGenders();
+        setGenres(response.data);
+    };
 
     const toggleFilter = (filter: string) => {
         switch (filter) {
@@ -82,8 +99,16 @@ const ListPage = () => {
         }
     };
 
-    const filtrosList = Object.keys(mockAlbums.filtros);
-    const filtros: any = mockAlbums.filtros;
+    const handleGenreChange = (genre: string) => {
+        setSelectedGenre(genre);
+
+        if (genre) {
+            const filteredAlbums = originalAlbums.filter(album => album.genero.some((g: any) => g.nome === genre));
+            setAlbums(filteredAlbums);
+        } else {
+            setAlbums(originalAlbums);
+        }
+    };
 
     const sortedAlbums = [...albums].sort((a, b) => {
         const dateA = new Date(a.dataLancamento);
@@ -94,11 +119,6 @@ const ListPage = () => {
             return dateA.getTime() - dateB.getTime();
         }
     });
-
-    const filterMapper: any = {
-        genero: "Gênero",
-        anoLancamento: "Ano Lançamento",
-    };
 
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSortOrder(event.target.value);
@@ -112,25 +132,29 @@ const ListPage = () => {
                 <Content>
                     <FilterBlock>
                         <FilterList>
-                            {filtrosList &&
-                                filtrosList.map((filtro: any, index: number) => (
-                                    <FilterItem key={index}>
-                                        <FilterTitle onClick={() => toggleFilter(filtro)}>
-                                            {filterMapper[filtro]}
-                                            {checkFilterDisplay(filtro) ? <IconUp src={iconUpSrc} /> : <IconDown src={iconDownSrc} />}
-                                        </FilterTitle>
-                                        {checkFilterDisplay(filtro) && (
-                                            <FilterItemList>
-                                                {filtros[filtro].map((item: any, index: number) => (
-                                                    <Item key={index}>
-                                                        <ItemLabel filterFor={item}>{item}</ItemLabel>
-                                                        <ItemInput id={item} />
-                                                    </Item>
-                                                ))}
-                                            </FilterItemList>
-                                        )}
-                                    </FilterItem>
-                                ))}
+                            <FilterItem>
+                                <FilterTitle onClick={() => toggleFilter("genero")}>
+                                    Gênero
+                                    {checkFilterDisplay("genero") ? <IconUp src={iconUpSrc} /> : <IconDown src={iconDownSrc} />}
+                                </FilterTitle>
+                                {checkFilterDisplay("genero") && (
+                                    <FilterItemList>
+                                        {genres.map((genre: any, index: number) => (
+                                            <Item key={index}>
+                                                <ItemLabel filterFor={genre.nome}>{genre.nome}</ItemLabel>
+                                                <ItemInput
+                                                    id={genre.nome}
+                                                    type="radio"
+                                                    name="genre"
+                                                    checked={selectedGenre === genre.nome}
+                                                    onChange={() => handleGenreChange(genre.nome)}
+                                                />
+                                            </Item>
+                                        ))}
+                                    </FilterItemList>
+                                )}
+                            </FilterItem>
+                            {/* Other filters can be added similarly */}
                         </FilterList>
                     </FilterBlock>
                     <ListBlock>

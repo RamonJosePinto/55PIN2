@@ -33,13 +33,16 @@ export const postUser = (userData: any) =>
         biografia: userData.biography,
         tipo: userData.userType,
     });
+
 export const postAlbum = (album: any) =>
     baseURL.post(`/albums`, {
         titulo: album.name,
         dataLancamento: album.releaseYear,
         status: "APROVADA",
-        tipo: "EP", //TODO VER SOBRE
-        genero: album.genero,
+        tipo: "EP", // TODO: Ver sobre
+        genero: album.genero.map((genero: any) => ({
+            nome: genero.nome,
+        })),
         autores: album.autores.map((autor: any) => ({
             id: autor.id,
         })),
@@ -113,3 +116,5 @@ export const login = (username: string, password: string) => {
 };
 
 export const logout = (id: number) => baseURL.post(`/users/${id}/logout`);
+
+export const getAllGenders = () => baseURL.get("/genders");
