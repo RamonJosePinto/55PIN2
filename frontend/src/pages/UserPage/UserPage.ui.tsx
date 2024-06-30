@@ -6,8 +6,6 @@ import {
     UserProfile,
     UserDetails,
     UserStats,
-    AlbumsSection,
-    Album,
     UserInfo,
     UserName,
     UserInfoButton,
@@ -34,7 +32,6 @@ import {
     CarouselItem,
     TabsContainer,
     Tab,
-    ActiveTab,
     TabsList,
     ProfileDefaultIcon,
 } from "./UserPage.styles";
@@ -45,7 +42,7 @@ import CreateWorkModal from "../../components/Modals/CreateWork/CreateWork.ui";
 import {UserContext} from "../../hooks/UserContext";
 import defaultAlbumImage from "../../assets/images/default-cover.png";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
-import {getUser, getUserAlbuns, postAlbum, postUser} from "../../api/ApiService";
+import {getUser, getUserAlbuns, postAlbum} from "../../api/ApiService";
 import {useNavigate} from "react-router-dom";
 
 const UserPage: React.FC = () => {
@@ -171,12 +168,10 @@ const UserPage: React.FC = () => {
                             <DetailTitle>Reviews</DetailTitle>
                             <DetailTable>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Quantidade de Reviews: </DetailInfo>
                                     <DetailValue>{mockData.reviews}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Média de nota das reviews: </DetailInfo>
                                     <DetailValue>{mockData.reviewMedia}</DetailValue>
                                 </DetailRow>
@@ -187,7 +182,6 @@ const UserPage: React.FC = () => {
                             <DetailTitle>Pontução</DetailTitle>
                             <DetailTable>
                                 <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
                                     <DetailInfo>Média de pontuação: </DetailInfo>
                                     <DetailValue>{mockData.comments}</DetailValue>
                                 </DetailRow>

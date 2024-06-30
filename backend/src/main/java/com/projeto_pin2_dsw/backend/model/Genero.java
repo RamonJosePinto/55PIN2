@@ -6,6 +6,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Genero {
 
@@ -16,14 +18,26 @@ public class Genero {
     private String nome;
     
     @ManyToMany(targetEntity = Album.class, mappedBy = "genero")
+    @JsonIgnore
     private Set<Album> albuns;
     
     @ManyToMany(targetEntity = Performance.class, mappedBy = "genero")
+    @JsonIgnore
     private Set<Performance> performances;
+    
+    public Genero() {}
 
-    // Getters and Setters
+    
 
-    public Integer getId() {
+    public Genero(Integer id, String nome, Set<Album> albuns, Set<Performance> performances) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.albuns = albuns;
+		this.performances = performances;
+	}
+
+	public Integer getId() {
         return id;
     }
 
@@ -38,7 +52,7 @@ public class Genero {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
+    
     public Set<Album> getAlbuns() {
         return albuns;
     }

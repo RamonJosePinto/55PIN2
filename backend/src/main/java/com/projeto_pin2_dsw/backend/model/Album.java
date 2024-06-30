@@ -128,8 +128,18 @@ public class Album /*extends Obra*/ {
     public void setTipo(TipoAlbum tipo) {
         this.tipo = tipo;
     }
+    
+    
 
-    @Override
+    public Set<Genero> getGenero() {
+		return genero;
+	}
+
+	public void setGenero(Set<Genero> genero) {
+		this.genero = genero;
+	}
+
+	@Override
     public String toString() {
         return "Album{" + "id=" + id + ", autores=" + autores + ", titulo=" + titulo + ", dataLancamento=" + dataLancamento + ", faixas=" + faixas + ", urlImagemCapa=" + urlImagemCapa + ", tipo=" + tipo + '}';
     }

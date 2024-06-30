@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {
     ModalOverlay,
     ModalContainer,
@@ -26,10 +26,7 @@ interface NotificationModalProps {
     onClose: () => void;
 }
 
-const NotificationModal: React.FC<NotificationModalProps> = ({
-    isOpen,
-    onClose,
-}) => {
+const NotificationModal: React.FC<NotificationModalProps> = ({isOpen, onClose}) => {
     if (!isOpen) {
         return null;
     }
@@ -45,28 +42,16 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
                 </ModalHeader>
                 <NotificationList>
                     <AlingEnd>
-                        <MarkAllAsReadButton onClick={onClose}>
-                            Marcar todas como lidas
-                        </MarkAllAsReadButton>
+                        <MarkAllAsReadButton onClick={onClose}>Marcar todas como lidas</MarkAllAsReadButton>
                     </AlingEnd>
                     {notifications.map(notification => (
                         <NotificationItem key={notification.id}>
-                            <ProfilePicture
-                                src={notification.profilePicture}
-                                alt="Profile"
-                            />
+                            <ProfilePicture src={notification.profilePicture} alt="Profile" />
                             <NotificationRow>
                                 <NotificationText>
-                                    <NotificationUserName>
-                                        {notification.user}
-                                    </NotificationUserName>{" "}
-                                    <NotificationDescription>
-                                        {notification.action}
-                                    </NotificationDescription>
+                                    <NotificationUserName>{notification.user}</NotificationUserName> <NotificationDescription>{notification.action}</NotificationDescription>
                                 </NotificationText>
-                                <NotificationTime>
-                                    {notification.time}
-                                </NotificationTime>
+                                <NotificationTime>{notification.time}</NotificationTime>
                             </NotificationRow>
                             {notification.unread && <UnreadNotification />}
                         </NotificationItem>

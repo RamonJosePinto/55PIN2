@@ -28,14 +28,8 @@ const CommentModal: React.FC<{
     reviewId: number;
     userId: number;
 }> = ({onClose, userId, reviewId}) => {
-    const maxLength = 300;
-
     const schema = yup.object().shape({
-        texto: yup
-            .string()
-            .required("O texto do comentário é obrigatório")
-            .min(100, "Deve ter um mínimo de 100 caracteres")
-            .max(300, "Deve ter um máximo de 300 caracteres"),
+        texto: yup.string().required("O texto do comentário é obrigatório").min(100, "Deve ter um mínimo de 100 caracteres").max(300, "Deve ter um máximo de 300 caracteres"),
     });
 
     const {
@@ -71,9 +65,7 @@ const CommentModal: React.FC<{
                 </HeaderModal>
                 <FormContent onSubmit={handleSubmit(onSubmit)}>
                     <TextArea rows={5} {...register("texto")} />
-                    {errors.texto && (
-                        <ErrorMessage>{errors.texto.message}</ErrorMessage>
-                    )}
+                    {errors.texto && <ErrorMessage>{errors.texto.message}</ErrorMessage>}
                     <CharacterCount>{commentText.length} / 300</CharacterCount>
                     <ButtonsContainer>
                         <ButtonConfirm type="submit">Enviar</ButtonConfirm>

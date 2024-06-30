@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {
     ModalBackground,
     ModalContainer,
@@ -15,7 +15,6 @@ import {
     CharacterCount,
     ButtonsRow,
     NotaField,
-    NotaLabel,
     NotaInput,
     ErrorMessage,
 } from "./ReviewModal.styles";
@@ -44,11 +43,7 @@ const ReviewModal: React.FC<{
             .min(0, "A nota deve ser pelo menos 0")
             .max(100, "A nota deve ser no máximo 100")
             .required("A nota é obrigatória"),
-        texto: yup
-            .string()
-            .required("O texto da review é obrigatório")
-            .min(100, "Deve ter um minimo de 100 caracteres")
-            .max(300, "Deve ter um máximo de 300 caracteres"),
+        texto: yup.string().required("O texto da review é obrigatório").min(100, "Deve ter um minimo de 100 caracteres").max(300, "Deve ter um máximo de 300 caracteres"),
     });
 
     const {
@@ -85,21 +80,13 @@ const ReviewModal: React.FC<{
                 <FormContent onSubmit={handleSubmit(onSubmit)}>
                     <NotaField>
                         <FieldLabel htmlFor="nota">Nota</FieldLabel>
-                        <NotaInput
-                            type="number"
-                            id="nota"
-                            {...register("nota")}
-                        />
-                        {errors.nota && (
-                            <ErrorMessage>{errors.nota.message}</ErrorMessage>
-                        )}
+                        <NotaInput type="number" id="nota" {...register("nota")} />
+                        {errors.nota && <ErrorMessage>{errors.nota.message}</ErrorMessage>}
                     </NotaField>
                     <FormGroup>
                         <FieldLabel htmlFor="texto">Sua Review</FieldLabel>
                         <TextArea id="texto" rows={5} {...register("texto")} />
-                        {errors.texto && (
-                            <ErrorMessage>{errors.texto.message}</ErrorMessage>
-                        )}
+                        {errors.texto && <ErrorMessage>{errors.texto.message}</ErrorMessage>}
                         <CharacterCount>
                             {reviewText.length} / {maxLength}
                         </CharacterCount>
