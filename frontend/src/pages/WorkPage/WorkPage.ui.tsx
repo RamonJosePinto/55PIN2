@@ -47,32 +47,29 @@ import {
     ReviewPoints,
     ReviewNota,
     ReviewNotaText,
+    DefaultProfileIcon,
+    ReviewSelect,
+    ReviewSelectOption,
+    CommentTitleSection,
 } from "./WorkPage.styles";
-import likeIcon from "../../assets/icons/icon-like.svg";
 import {format} from "date-fns";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import ReviewModal from "../../components/Modals/Review/ReviewModal.ui";
 import CommentModal from "../../components/Modals/CommentModal/CommentModal.ui";
 import {useParams} from "react-router-dom";
-import {
-    getAlbumById,
-    getReviewByIdAlbum,
-    postComment,
-} from "../../api/ApiService";
+import {getAlbumById, getReviewByIdAlbum} from "../../api/ApiService";
 import {UserContext} from "../../hooks/UserContext";
+import defaultUserIcon from "../../assets/images/default-user.jfif";
+import defaultAlbumImage from "../../assets/images/default-cover.png";
 
 const WorkPage: React.FC = () => {
     const [workData, setWorkData] = useState<any>(null);
-    const [reviewData, setReviewData] = useState<any>([]);
-    const [activeTab, setActiveTab] = useState("Albuns");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [expandedReviewIndex, setExpandedReviewIndex] = useState<
-        number | null
-    >(null);
+    const [reviewData, setReviewData] = useState<any[]>([]);
+    const [isModalOpen] = useState(false);
+    const [expandedReviewIndex, setExpandedReviewIndex] = useState<number | null>(null);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-    const [currentCommentReviewId, setCurrentCommentReviewId] = useState<
-        number | null
-    >(null);
+    const [currentCommentReviewId, setCurrentCommentReviewId] = useState<number | null>(null);
+    const [sortOption, setSortOption] = useState("most_recent");
     const {id} = useParams();
     const {user} = useContext(UserContext);
 
@@ -96,6 +93,27 @@ const WorkPage: React.FC = () => {
         setExpandedReviewIndex(expandedReviewIndex === index ? null : index);
     };
 
+    const sortReviews = (reviews: any[], option: string) => {
+        let sortedReviews;
+        switch (option) {
+            case "most_recent":
+                sortedReviews = [...reviews].sort((a, b) => new Date(b.dataHora).getTime() - new Date(a.dataHora).getTime());
+                break;
+            case "oldest":
+                sortedReviews = [...reviews].sort((a, b) => new Date(a.dataHora).getTime() - new Date(b.dataHora).getTime());
+                break;
+            case "highest_rating":
+                sortedReviews = [...reviews].sort((a, b) => b.nota - a.nota);
+                break;
+            case "lowest_rating":
+                sortedReviews = [...reviews].sort((a, b) => a.nota - b.nota);
+                break;
+            default:
+                sortedReviews = reviews;
+        }
+        return sortedReviews;
+    };
+
     useEffect(() => {
         if (id) {
             getAlbumById(id)
@@ -108,8 +126,8 @@ const WorkPage: React.FC = () => {
 
             getReviewByIdAlbum(id)
                 .then(res => {
-                    setReviewData(res.data);
-                    console.log(res.data);
+                    const sortedReviews = sortReviews(res.data, "most_recent");
+                    setReviewData(sortedReviews);
                 })
                 .catch(err => {
                     console.log(err);
@@ -117,19 +135,12 @@ const WorkPage: React.FC = () => {
         }
     }, [id]);
 
+    useEffect(() => {
+        const sortedReviews = sortReviews(reviewData, sortOption);
+        setReviewData(sortedReviews);
+    }, [sortOption]);
+
     if (!workData) return <div>Loading...</div>;
-
-    const handleNotificationClick = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleTabClick = (tabName: string) => {
-        setActiveTab(tabName);
-    };
 
     const formatDateTime = (timestamp: any) => {
         const date = new Date(timestamp);
@@ -138,49 +149,33 @@ const WorkPage: React.FC = () => {
 
     const calculateAverageScore = () => {
         if (reviewData.length === 0) return "N/A";
-        const totalScore = reviewData.reduce(
-            (acc: number, review: any) => acc + review.nota,
-            0
-        );
-        return totalScore / reviewData.length;
+        const totalScore = reviewData.reduce((acc: number, review: any) => acc + review.nota, 0);
+        return (totalScore / reviewData.length).toFixed(2);
+    };
+
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortOption(e.target.value);
     };
 
     return (
         <>
             <TopBar />
             <Container>
-                <ReturnToPrevPage url="/" />
+                <ReturnToPrevPage />
                 <WorkInfoContainer>
                     <WorkProfile>
-                        <WorkPicture src={workData.url} alt="Profile" />
+                        <WorkPicture src={workData.urlImagemCapa && workData.urlImagemCapa !== null ? "/" + workData.urlImagemCapa : defaultAlbumImage} alt="Profile" />
                         <WorkInfo>
                             <WorkName>{workData?.titulo}</WorkName>
-                            <WorkType color={"#398ecc"}>
-                                {workData?.tipo}
-                            </WorkType>
+                            <WorkType color={"#398ecc"}>{workData?.tipo}</WorkType>
                             <WorkStats>
                                 <WorkStatsItem>
-                                    <WorkStatsNumber>
-                                        {reviewData?.length}
-                                    </WorkStatsNumber>
+                                    <WorkStatsNumber>{reviewData?.length}</WorkStatsNumber>
                                     Reviews
-                                </WorkStatsItem>
-                                <WorkStatsItem>
-                                    <WorkStatsNumber>
-                                        {workData.likes}
-                                    </WorkStatsNumber>{" "}
-                                    Curtidas
                                 </WorkStatsItem>
                             </WorkStats>
                             <WorkInfoButton>
-                                <ButtonProfile
-                                    onClick={handleNotificationClick}
-                                >
-                                    Curtir
-                                </ButtonProfile>
-                                <ButtonProfile onClick={handleReviewClick}>
-                                    Fazer Review
-                                </ButtonProfile>
+                                <ButtonProfile onClick={handleReviewClick}>Fazer Review</ButtonProfile>
                             </WorkInfoButton>
                         </WorkInfo>
                     </WorkProfile>
@@ -190,32 +185,18 @@ const WorkPage: React.FC = () => {
                             <DetailTable>
                                 <DetailRow>
                                     <DetailInfo>Autor: </DetailInfo>
-                                    <DetailValue>
-                                        {workData?.autores[0]?.username}
-                                    </DetailValue>
+                                    <DetailValue>{workData?.autores[0]?.username}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
                                     <DetailInfo>Ano de Lançamento: </DetailInfo>
-                                    <DetailValue>
-                                        {workData.dataLancamento}
-                                    </DetailValue>
+                                    <DetailValue>{workData.dataLancamento}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    <DetailInfo>
-                                        {workData?.tipo === "EP"
-                                            ? "Quantidade de Faixas:"
-                                            : "Participações especiais:"}
-                                    </DetailInfo>
-                                    <DetailValue>
-                                        {workData?.tipo === "EP"
-                                            ? workData?.faixas.length
-                                            : "N/A"}
-                                    </DetailValue>
+                                    <DetailInfo>{workData?.tipo === "EP" ? "Quantidade de Faixas:" : "Participações especiais:"}</DetailInfo>
+                                    <DetailValue>{workData?.tipo === "EP" ? workData?.faixas.length : "N/A"}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    <DetailInfo>
-                                        Participações especiais:{" "}
-                                    </DetailInfo>
+                                    <DetailInfo>Participações especiais: </DetailInfo>
                                     <DetailValue>{"N/A"}</DetailValue>
                                 </DetailRow>
                             </DetailTable>
@@ -232,133 +213,65 @@ const WorkPage: React.FC = () => {
 
                 <CarouselContainer>
                     <CommentSection>
-                        <CommentSectionTitle>
-                            Reviews | {reviewData?.length} reviews realizadas
-                        </CommentSectionTitle>
+                        <CommentTitleSection>
+                            <CommentSectionTitle>Reviews | {reviewData?.length} reviews realizadas</CommentSectionTitle>
+                            <ReviewSelect value={sortOption} onChange={handleSortChange}>
+                                <ReviewSelectOption value="most_recent">Mais recente</ReviewSelectOption>
+                                <ReviewSelectOption value="oldest">Mais antigo</ReviewSelectOption>
+                                <ReviewSelectOption value="highest_rating">Melhor avaliado</ReviewSelectOption>
+                                <ReviewSelectOption value="lowest_rating">Pior avaliado</ReviewSelectOption>
+                            </ReviewSelect>
+                        </CommentTitleSection>
                         <CommentList>
-                            {reviewData?.map(
-                                (review: any, reviewIndex: any) => (
-                                    <CoomentContainer key={reviewIndex}>
-                                        <Comment>
-                                            <CommentHeader>
-                                                <AuthorImage
-                                                    src={
-                                                        review.reviewer
-                                                            .imageUrl || ""
-                                                    }
-                                                />
-                                                <CommentAuthorInfo>
-                                                    <CommentAuthor>
-                                                        {review.reviewer.nome}
-                                                    </CommentAuthor>
-                                                    <CommentDate>{`${formatDateTime(
-                                                        review.dataHora
-                                                    )}`}</CommentDate>
-                                                </CommentAuthorInfo>
-                                                <ReviewPoints>
-                                                    <ReviewNota>
-                                                        {review.nota}
-                                                    </ReviewNota>
-                                                    <ReviewNotaText>
-                                                        Pontos
-                                                    </ReviewNotaText>
-                                                </ReviewPoints>
-                                            </CommentHeader>
-                                            <CommentBody>
-                                                {review.texto}
-                                            </CommentBody>
-                                            <CommentButtonContainer>
-                                                <LaunchCommentButton
-                                                    onClick={() =>
-                                                        handleCommentClick(
-                                                            review.id
-                                                        )
-                                                    }
-                                                >
-                                                    Fazer Comentário
-                                                </LaunchCommentButton>
-                                                {review.comentarios &&
-                                                    review.comentarios.length >
-                                                        0 && (
-                                                        <ToggleCommentsButton
-                                                            onClick={() =>
-                                                                toggleComments(
-                                                                    reviewIndex
-                                                                )
-                                                            }
-                                                        >
-                                                            {expandedReviewIndex ===
-                                                            reviewIndex
-                                                                ? "Esconder comentários"
-                                                                : "Ver comentários"}
-                                                        </ToggleCommentsButton>
-                                                    )}
-                                                {currentCommentReviewId ===
-                                                    review.id && (
-                                                    <CommentModal
-                                                        onClose={
-                                                            handleCloseCommentModal
-                                                        }
-                                                        reviewId={review.id}
-                                                        userId={user.id}
-                                                    />
-                                                )}
-                                            </CommentButtonContainer>
-                                        </Comment>
-
-                                        {expandedReviewIndex === reviewIndex &&
-                                            review.comentarios.map(
-                                                (
-                                                    comment: any,
-                                                    commentIndex: any
-                                                ) => (
-                                                    <ReviewComment
-                                                        className="review-comment"
-                                                        key={commentIndex}
-                                                    >
-                                                        <CommentHeader>
-                                                            <AuthorImage
-                                                                src={
-                                                                    comment
-                                                                        .reviewer
-                                                                        ?.imageUrl ||
-                                                                    ""
-                                                                }
-                                                            />
-                                                            <CommentAuthorInfo>
-                                                                <CommentAuthor>
-                                                                    {
-                                                                        comment
-                                                                            .reviewer
-                                                                            ?.nome
-                                                                    }
-                                                                </CommentAuthor>
-                                                                <CommentDate>{`${formatDateTime(
-                                                                    comment.dataHora
-                                                                )}`}</CommentDate>
-                                                            </CommentAuthorInfo>
-                                                        </CommentHeader>
-
-                                                        <CommentBody>
-                                                            {comment.texto}
-                                                        </CommentBody>
-                                                    </ReviewComment>
-                                                )
+                            {reviewData?.map((review: any, reviewIndex: any) => (
+                                <CoomentContainer key={reviewIndex}>
+                                    <Comment>
+                                        <CommentHeader>
+                                            {review.reviewer.imageUrl ? <AuthorImage src={review.reviewer.imageUrl} /> : <DefaultProfileIcon src={defaultUserIcon} />}
+                                            <CommentAuthorInfo>
+                                                <CommentAuthor>{review.reviewer.nome}</CommentAuthor>
+                                                <CommentDate>{`${formatDateTime(review.dataHora)}`}</CommentDate>
+                                            </CommentAuthorInfo>
+                                            <ReviewPoints>
+                                                <ReviewNota>{review.nota}</ReviewNota>
+                                                <ReviewNotaText>Pontos</ReviewNotaText>
+                                            </ReviewPoints>
+                                        </CommentHeader>
+                                        <CommentBody>{review.texto}</CommentBody>
+                                        <CommentButtonContainer>
+                                            <LaunchCommentButton onClick={() => handleCommentClick(review.id)}>Fazer Comentário</LaunchCommentButton>
+                                            {review.comentarios && review.comentarios.length > 0 && (
+                                                <ToggleCommentsButton onClick={() => toggleComments(reviewIndex)}>
+                                                    {expandedReviewIndex === reviewIndex ? "Esconder comentários" : "Ver comentários"}
+                                                </ToggleCommentsButton>
                                             )}
-                                    </CoomentContainer>
-                                )
-                            )}
+                                            {currentCommentReviewId === review.id && (
+                                                <CommentModal onClose={handleCloseCommentModal} reviewId={review.id} userId={user.usuario.id} />
+                                            )}
+                                        </CommentButtonContainer>
+                                    </Comment>
+
+                                    {expandedReviewIndex === reviewIndex &&
+                                        review.comentarios.map((comment: any, commentIndex: any) => (
+                                            <ReviewComment className="review-comment" key={commentIndex}>
+                                                <CommentHeader>
+                                                    <AuthorImage src={comment.reviewer?.imageUrl || defaultUserIcon} />
+                                                    <CommentAuthorInfo>
+                                                        <CommentAuthor>{comment.reviewer?.nome}</CommentAuthor>
+                                                        <CommentDate>{`${formatDateTime(comment.dataHora)}`}</CommentDate>
+                                                    </CommentAuthorInfo>
+                                                </CommentHeader>
+
+                                                <CommentBody>{comment.texto}</CommentBody>
+                                            </ReviewComment>
+                                        ))}
+                                </CoomentContainer>
+                            ))}
                         </CommentList>
                     </CommentSection>
                 </CarouselContainer>
             </Container>
-            {isReviewModalOpen && (
-                <ReviewModal
-                    albumId={Number(id)}
-                    userId={user?.id}
-                    onClose={handleCloseReviewModal}
-                />
-            )}
+            {isReviewModalOpen && <ReviewModal albumId={Number(id)} userId={user?.usuario.id} onClose={handleCloseReviewModal} />}
             {isModalOpen && "Curtir"}
         </>
     );

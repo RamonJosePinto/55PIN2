@@ -161,3 +161,28 @@ export const ImageUploadButton = styled.button`
         background-color: #eaeaed;
     }
 `;
+
+export const Table = styled.table`
+    border-collapse: collapse;
+    margin-top: 20px;
+    height: fit-content;
+`;
+
+export const TableHead = styled.thead`
+    background-color: #f8f9fa;
+`;
+
+export const TableRow = styled.tr``;
+
+export const TableHeader = styled.th`
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    text-align: left;
+`;
+
+export const TableBody = styled.tbody``;
+
+export const TableCell = styled.td`
+    border: 1px solid #dee2e6;
+    padding: 10px;
+`;

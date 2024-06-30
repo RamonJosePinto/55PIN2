@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {useForm, SubmitHandler} from "react-hook-form";
 import {
     ModalBackground,
@@ -22,10 +22,14 @@ import {
     TabsContainer,
     TabsList,
     Tab,
+    AuthorInputContainer,
 } from "./CreateWork.styles";
 import closeIcon from "../../../assets/icons/icon-close.svg";
 import AddDiscographyModal from "../AddDiscography/AddDiscographyModal.ui";
-import {postAlbum, postPerformance} from "../../../api/ApiService";
+import {postAlbum, postPerformance, validateAuthors} from "../../../api/ApiService";
+import {Button} from "../../../pages/LoginPage/LoginPage.styles";
+import {UserContext} from "../../../hooks/UserContext";
+import {Popup, PopupMessage} from "../../../pages/RegisterPage/RegisterPage.styles";
 
 interface CreateWorkModalProps {
     isOpen: boolean;
@@ -37,58 +41,68 @@ interface AlbumFormInputs {
     releaseYear: string;
     videoLink?: string;
     specialParticipations: string;
+    autores: string;
+    genero: string;
 }
 
 interface PerformanceFormInputs {
     title: string;
     releaseDate: string;
+    autores: string;
+    genero: string;
 }
 
 const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
     const [discographies, setDiscographies] = useState<any[]>([]);
-    const [isAddDiscographyModalOpen, setAddDiscographyModalOpen] =
-        useState(false);
+    const [isAddDiscographyModalOpen, setAddDiscographyModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("Album");
-    const {
-        register: registerAlbum,
-        handleSubmit: handleSubmitAlbum,
-        reset: resetAlbumForm,
-    } = useForm<AlbumFormInputs>();
-    const {
-        register: registerPerformance,
-        handleSubmit: handleSubmitPerformance,
-        reset: resetPerformanceForm,
-    } = useForm<PerformanceFormInputs>();
+    const {register: registerAlbum, handleSubmit: handleSubmitAlbum, reset: resetAlbumForm, setValue} = useForm<AlbumFormInputs>();
+    const {register: registerPerformance, handleSubmit: handleSubmitPerformance, reset: resetPerformanceForm, setValue: setValuePerformance} = useForm<PerformanceFormInputs>();
+    const [showPopup, setShowPopup] = useState(false);
+    const {user} = useContext(UserContext);
 
-    const handleAlbumSubmit: SubmitHandler<AlbumFormInputs> = data => {
-        const dataFormatted = {
-            autores: [{id: 1}], // Adicionar o ID correto aqui
-            ...data,
-            faixas: discographies,
-        };
-        postAlbum(dataFormatted)
-            .then(() => {
-                resetForms();
-                onClose();
-            })
-            .catch(console.error);
+    const handleAlbumSubmit: SubmitHandler<AlbumFormInputs> = async data => {
+        try {
+            const authorNames = data.autores.split(",").map(name => name.trim());
+            const generosArray = data.genero.split(",").map(nome => nome.trim());
+            const response = await validateAuthors(authorNames);
+            const authorIds = response.data.map(author => ({id: author.id}));
+            authorIds.push({id: user.usuario.id});
+            const dataFormatted = {
+                ...data,
+                autores: authorIds,
+                genero: generosArray,
+                faixas: discographies,
+            };
+            await postAlbum(dataFormatted);
+            resetForms();
+            onClose();
+        } catch (error) {
+            console.error("Error validating authors", error);
+        }
     };
 
-    const handlePerformanceSubmit: SubmitHandler<
-        PerformanceFormInputs
-    > = data => {
-        const dataFormatted = {
-            autores: [{id: 1}], // Adicionar o ID correto aqui
-            titulo: data.title,
-            dataLancamento: data.releaseDate,
-            status: "APROVADA",
-        };
-        postPerformance(dataFormatted)
-            .then(() => {
-                resetForms();
-                onClose();
-            })
-            .catch(console.error);
+    const handlePerformanceSubmit: SubmitHandler<PerformanceFormInputs> = async data => {
+        try {
+            const authorNames = data.autores.split(",").map(name => name.trim());
+            const generosArray = data.genero.split(",").map(nome => nome.trim());
+            const response = await validateAuthors(authorNames);
+            const authorIds = response.data.map(author => ({id: author.id}));
+            authorIds.push({id: user.usuario.id});
+            const dataFormatted = {
+                genero: generosArray,
+                autores: authorIds,
+                titulo: data.title,
+                dataLancamento: data.releaseDate,
+                status: "APROVADA",
+            };
+            await postPerformance(dataFormatted);
+            resetForms();
+            onClose();
+            showSuccessPopup();
+        } catch (error) {
+            console.error("Error validating authors", error);
+        }
     };
 
     const handleAddDiscography = (newDiscographies: any) => {
@@ -104,6 +118,13 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
         resetPerformanceForm();
         setDiscographies([]);
         setActiveTab("Album");
+    };
+
+    const showSuccessPopup = () => {
+        setShowPopup(true);
+        setTimeout(() => {
+            setShowPopup(false);
+        }, 3000);
     };
 
     if (!isOpen) return null;
@@ -126,26 +147,16 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                         </HeaderModal>
                         <TabsContainer>
                             <TabsList>
-                                <Tab
-                                    active={activeTab === "Album"}
-                                    onClick={() => handleTabClick("Album")}
-                                >
+                                <Tab active={activeTab === "Album"} onClick={() => handleTabClick("Album")}>
                                     Album
                                 </Tab>
-                                <Tab
-                                    active={activeTab === "Performance"}
-                                    onClick={() =>
-                                        handleTabClick("Performance")
-                                    }
-                                >
+                                <Tab active={activeTab === "Performance"} onClick={() => handleTabClick("Performance")}>
                                     Performance
                                 </Tab>
                             </TabsList>
                         </TabsContainer>
                         {activeTab === "Album" ? (
-                            <FormContent
-                                onSubmit={handleSubmitAlbum(handleAlbumSubmit)}
-                            >
+                            <FormContent onSubmit={handleSubmitAlbum(handleAlbumSubmit)}>
                                 <InputRow>
                                     <div style={{flex: 1}}>
                                         <FormGroup>
@@ -157,46 +168,32 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                                             />
                                         </FormGroup>
                                         <FormGroup>
-                                            <FieldLabel>
-                                                Ano de Lançamento
-                                            </FieldLabel>
-                                            <InputForm
-                                                {...registerAlbum(
-                                                    "releaseYear",
-                                                    {required: true}
-                                                )}
-                                            />
+                                            <FieldLabel>Ano de Lançamento</FieldLabel>
+                                            <InputForm {...registerAlbum("releaseYear", {required: true})} />
                                         </FormGroup>
                                         <FormGroup>
-                                            <FieldLabel>
-                                                Link de Video (Opcional)
-                                            </FieldLabel>
-                                            <InputForm
-                                                {...registerAlbum("videoLink")}
-                                            />
+                                            <FieldLabel>Link de Video (Opcional)</FieldLabel>
+                                            <InputForm {...registerAlbum("videoLink")} />
                                         </FormGroup>
                                         <FormGroup>
-                                            <FieldLabel>
-                                                Participações Especiais
-                                            </FieldLabel>
-                                            <InputForm
-                                                {...registerAlbum(
-                                                    "specialParticipations",
-                                                    {required: true}
-                                                )}
-                                            />
+                                            <FieldLabel>Participações Especiais</FieldLabel>
+                                            <InputForm {...registerAlbum("specialParticipations", {required: true})} />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <FieldLabel>Gêneros (separados por vírgula)</FieldLabel>
+                                            <InputForm {...registerAlbum("genero", {required: true})} />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <FieldLabel>Autores</FieldLabel>
+                                            <InputForm {...registerAlbum("autores", {required: true})} placeholder="Digite os nomes dos autores separados por vírgula" />
                                         </FormGroup>
                                     </div>
                                     <ImageUploadContainer>
-                                        <ImageUploadButton>
-                                            Upload da Capa
-                                        </ImageUploadButton>
+                                        <ImageUploadButton>Upload da Capa</ImageUploadButton>
                                     </ImageUploadContainer>
                                 </InputRow>
                                 <ButtonsRow>
-                                    <ButtonConfirm type="submit">
-                                        Confirmar
-                                    </ButtonConfirm>
+                                    <ButtonConfirm type="submit">Confirmar</ButtonConfirm>
                                     <ButtonClose
                                         type="button"
                                         onClick={() => {
@@ -207,49 +204,34 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                                         Cancelar
                                     </ButtonClose>
                                 </ButtonsRow>
-                                <AddDiscographyButton
-                                    type="button"
-                                    onClick={() =>
-                                        setAddDiscographyModalOpen(true)
-                                    }
-                                >
+                                <AddDiscographyButton type="button" onClick={() => setAddDiscographyModalOpen(true)}>
                                     Adicionar Discografia
                                 </AddDiscographyButton>
                             </FormContent>
                         ) : (
-                            <FormContent
-                                onSubmit={handleSubmitPerformance(
-                                    handlePerformanceSubmit
-                                )}
-                            >
+                            <FormContent onSubmit={handleSubmitPerformance(handlePerformanceSubmit)}>
                                 <InputRow>
                                     <div style={{flex: 1}}>
                                         <FormGroup>
                                             <FieldLabel>Título</FieldLabel>
-                                            <InputForm
-                                                {...registerPerformance(
-                                                    "title",
-                                                    {required: true}
-                                                )}
-                                            />
+                                            <InputForm {...registerPerformance("title", {required: true})} />
                                         </FormGroup>
                                         <FormGroup>
-                                            <FieldLabel>
-                                                Data de Lançamento
-                                            </FieldLabel>
-                                            <InputForm
-                                                {...registerPerformance(
-                                                    "releaseDate",
-                                                    {required: true}
-                                                )}
-                                            />
+                                            <FieldLabel>Data de Lançamento</FieldLabel>
+                                            <InputForm {...registerPerformance("releaseDate", {required: true})} />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <FieldLabel>Gêneros (separados por vírgula)</FieldLabel>
+                                            <InputForm {...registerPerformance("genero", {required: true})} />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <FieldLabel>Autores</FieldLabel>
+                                            <InputForm {...registerPerformance("autores", {required: true})} placeholder="Digite os nomes dos autores separados por vírgula" />
                                         </FormGroup>
                                     </div>
                                 </InputRow>
                                 <ButtonsRow>
-                                    <ButtonConfirm type="submit">
-                                        Confirmar
-                                    </ButtonConfirm>
+                                    <ButtonConfirm type="submit">Confirmar</ButtonConfirm>
                                     <ButtonClose
                                         type="button"
                                         onClick={() => {
@@ -265,11 +247,12 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                     </ModalContent>
                 </ModalContainer>
             </ModalBackground>
-            <AddDiscographyModal
-                onAddDiscography={handleAddDiscography}
-                isOpen={isAddDiscographyModalOpen}
-                onClose={() => setAddDiscographyModalOpen(false)}
-            />
+            <AddDiscographyModal onAddDiscography={handleAddDiscography} isOpen={isAddDiscographyModalOpen} onClose={() => setAddDiscographyModalOpen(false)} />
+            {showPopup && (
+                <Popup>
+                    <PopupMessage>Obra cadastrada com sucesso!</PopupMessage>
+                </Popup>
+            )}
         </>
     );
 };

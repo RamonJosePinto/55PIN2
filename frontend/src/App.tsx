@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage.ui";
 import UserPage from "./pages/UserPage/UserPage.ui";
 import WorkPage from "./pages/WorkPage/WorkPage.ui";
 import ListPage from "./pages/ListPage/ListPage.ui";
+import ProtectedRoute from "./ProtectedRoute"; // Importa o componente de rota protegida
 
 function App() {
     return (
@@ -12,11 +13,11 @@ function App() {
             <Routes>
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/cadastro" element={<RegisterPage />} />
-                <Route path="/meus-dados" element={<UserPage />} />
-                <Route path="/obra" element={<WorkPage />} />
-                <Route path="/lista" element={<ListPage />} />
-                <Route path="/list/:searchTerm?" element={<ListPage />} />
-                <Route path="/obra/:id?" element={<WorkPage />} />
+                <Route path="/meus-dados" element={<ProtectedRoute element={<UserPage />} />} />
+                <Route path="/obra" element={<ProtectedRoute element={<WorkPage />} />} />
+                <Route path="/lista" element={<ProtectedRoute element={<ListPage />} />} />
+                <Route path="/list/:searchTerm?" element={<ProtectedRoute element={<ListPage />} />} />
+                <Route path="/obra/:id?" element={<ProtectedRoute element={<WorkPage />} />} />
             </Routes>
         </BrowserRouter>
     );

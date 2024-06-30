@@ -1,8 +1,25 @@
 import axios from "axios";
 
 const baseURL = axios.create({
-    baseURL: "http://localhost:8080",
+    baseURL: "http://127.0.0.1:8080",
 });
+
+baseURL.interceptors.request.use(
+    config => {
+        // Pega o usuário do localStorage (se existir)
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+        // Adiciona o SessionId no cabeçalho, se disponível e se não for a requisição de login
+        if (user && user.id && !config.url?.includes("/login")) {
+            config.headers["SessionId"] = user.id;
+        }
+
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
 export const getUser = (id: number) => baseURL.get(`/users/${id}`);
 export const getUserAlbuns = (id: number) => baseURL.get(`/users/${id}/albums`);
@@ -20,8 +37,9 @@ export const postAlbum = (album: any) =>
     baseURL.post(`/albums`, {
         titulo: album.name,
         dataLancamento: album.releaseYear,
-        status: "APROVADA", //TODO VER SOBRE ISSO,
+        status: "APROVADA",
         tipo: "EP", //TODO VER SOBRE
+        genero: album.genero,
         autores: album.autores.map((autor: any) => ({
             id: autor.id,
         })),
@@ -53,8 +71,7 @@ export const putUser = (id: number, userData: any) =>
         tipo: userData.tipo,
     });
 
-export const getSearchAlbums = (title: string) =>
-    baseURL.get(`/albums/search/${title}`);
+export const getSearchAlbums = (title: string) => baseURL.get(`/albums/search/${title}`);
 
 export const getAlbumById = (id: string) => baseURL.get(`/albums/${id}`);
 
@@ -66,8 +83,7 @@ export const postReview = (review: any) =>
         reviewer: {id: review.reviewer},
     });
 
-export const getReviewByIdAlbum = (albumId: string | undefined) =>
-    baseURL.get(`/reviews/album/${albumId}`);
+export const getReviewByIdAlbum = (albumId: string | undefined) => baseURL.get(`/reviews/album/${albumId}`);
 
 export const postComment = (comment: any) => {
     return baseURL.post("/comentarios", {
@@ -76,3 +92,24 @@ export const postComment = (comment: any) => {
         review: {id: comment.review},
     });
 };
+
+export const validateAuthors = (nomes: string[]) => {
+    const params = new URLSearchParams();
+    nomes.forEach(nome => params.append("nomes", nome));
+    return baseURL.get(`/users/validateAuthors`, {params});
+};
+
+export const login = (username: string, password: string) => {
+    return baseURL.post(
+        `/users/login`,
+        {},
+        {
+            headers: {
+                Username: username,
+                Password: password,
+            },
+        }
+    );
+};
+
+export const logout = (id: number) => baseURL.post(`/users/${id}/logout`);

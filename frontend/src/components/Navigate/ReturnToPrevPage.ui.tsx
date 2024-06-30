@@ -1,8 +1,19 @@
+import React from "react";
 import styled from "styled-components";
+import {useNavigate} from "react-router-dom";
 
-function ReturnToPrevPage({url}: {url: string}) {
+function ReturnToPrevPage() {
+    const navigate = useNavigate();
+
+    const handleBackClick = (
+        e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+    ) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     return (
-        <BackToPrevPage href={url}>
+        <BackToPrevPage href="#" onClick={handleBackClick}>
             {"<"} Voltar para página anterior
         </BackToPrevPage>
     );

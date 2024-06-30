@@ -26,7 +26,6 @@ public class Sessao {
     private String id;
     
     @ManyToOne(targetEntity = Usuario.class)
-    @JsonIgnore
     private Usuario usuario;
     
     private LocalDateTime dataCriacao;

@@ -2,6 +2,7 @@ import React, {useContext, useState} from "react";
 import NotificationBellIcon from "../../assets/icons/notification-icon.svg";
 import {
     Container,
+    DefaultProfileIcon,
     Menu,
     MenuContainer,
     NotificationIcon,
@@ -18,10 +19,12 @@ import NotificationModal from "../Modals/Notification/NotificationModal.ui";
 import {useNavigate} from "react-router-dom";
 import SearchIcon from "../../assets/icons/icon-search.svg";
 import {UserContext} from "../../hooks/UserContext";
+import {ProfileDefaultIcon} from "../../pages/UserPage/UserPage.styles";
+import defaultUserIcon from "../../assets/images/default-user.jfif";
+import {logout} from "../../api/ApiService";
 
 const TopBar: React.FC = () => {
-    const [isNotificatioModalOpen, setIsNotificationModalOpen] =
-        useState(false);
+    const [isNotificatioModalOpen, setIsNotificationModalOpen] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
@@ -40,52 +43,33 @@ const TopBar: React.FC = () => {
         setIsNotificationModalOpen(!isNotificatioModalOpen);
     };
 
-    console.log({user});
-
     return (
         <TopBarContainer>
             <Container>
                 <Row>
                     <MenuContainer>
-                        <Menu onClick={() => handleMenu("todos-albuns")}>
-                            Todos Albuns
+                        <Menu onClick={() => handleMenu("todos-albuns")}>Todos Albuns</Menu>
+                        <Menu
+                            onClick={() => {
+                                logout(user.usuario.id);
+                                localStorage.removeItem("user");
+                                navigate("/");
+                            }}
+                        >
+                            Logout
                         </Menu>
-                        <Menu>Seguidores</Menu>
-                        <Menu>Seguidores</Menu>
-                        <Menu>Seguidores</Menu>
                     </MenuContainer>
                     <ProfileNotificationContainer>
-                        <NotificationIcon
-                            src={NotificationBellIcon}
-                            onClick={toggleNotificationModal}
-                        />
-                        <ProfileContainer
-                            onClick={() => navigate("/meus-dados")}
-                        >
-                            {/* TODO: adicionar de um arquivo mock o nome e a foto */}
-                            <ProfilePicture
-                                src="src/assets/images/profile-pic.png"
-                                alt="Profile"
-                            />
-                            <ProfileName>{user?.name || "Anonimo"}</ProfileName>
+                        <ProfileContainer onClick={() => navigate("/meus-dados")}>
+                            {user.usuario.profilePicture ? <ProfilePicture src={user.usuario.profilePicture} alt="Profile" /> : <DefaultProfileIcon src={defaultUserIcon} />}
+                            <ProfileName>{user?.usuario.username || "Anonimo"}</ProfileName>
                         </ProfileContainer>
-                        <SearchBar
-                            type="text"
-                            value={searchTerm}
-                            onChange={e => setSearchTerm(e.target.value)}
-                            placeholder="Buscar"
-                        />
-                        <SearchIconButton
-                            src={SearchIcon}
-                            onClick={handleSearch}
-                        />
+                        <SearchBar type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Buscar" />
+                        <SearchIconButton src={SearchIcon} onClick={handleSearch} />
                     </ProfileNotificationContainer>
                 </Row>
             </Container>
-            <NotificationModal
-                isOpen={isNotificatioModalOpen}
-                onClose={toggleNotificationModal}
-            />
+            <NotificationModal isOpen={isNotificatioModalOpen} onClose={toggleNotificationModal} />
         </TopBarContainer>
     );
 };

@@ -43,11 +43,7 @@ interface FormInputs {
     biografia: string;
 }
 
-const EditFormModal: React.FC<EditFormModalProps> = ({
-    isOpen,
-    onClose,
-    userData,
-}) => {
+const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}) => {
     const {register, handleSubmit, reset} = useForm<FormInputs>({
         defaultValues: userDataMock,
     });
@@ -55,7 +51,7 @@ const EditFormModal: React.FC<EditFormModalProps> = ({
     const [userFormData, setUserFormData] = useState();
 
     React.useEffect(() => {
-        getUser(userData?.id)
+        getUser(userData?.usuario.id)
             .then(res => {
                 setUserFormData(res.data);
                 console.log(res);
@@ -68,7 +64,7 @@ const EditFormModal: React.FC<EditFormModalProps> = ({
     const onSubmit: SubmitHandler<FormInputs> = data => {
         // onClose();
         console.log({data});
-        putUser(userData?.id, data)
+        putUser(userData.usuario.id, data)
             .then(res => {
                 window.alert("Deu boa");
                 console.log(res);
@@ -98,51 +94,31 @@ const EditFormModal: React.FC<EditFormModalProps> = ({
                         <InputRow>
                             <FormGroup>
                                 <FieldLabel>Nome Completo</FieldLabel>
-                                <InputForm
-                                    {...register("nome")}
-                                    type="text"
-                                    placeholder="Nome completo"
-                                />
+                                <InputForm {...register("nome")} type="text" placeholder="Nome completo" />
                             </FormGroup>
 
                             <FormGroup>
                                 <FieldLabel>Nome de usuário</FieldLabel>
-                                <InputForm
-                                    {...register("username")}
-                                    type="text"
-                                    placeholder="Nome de usuário"
-                                />
+                                <InputForm {...register("username")} type="text" placeholder="Nome de usuário" />
                             </FormGroup>
                         </InputRow>
 
                         <InputRow>
                             <FormGroup>
                                 <FieldLabel>E-mail</FieldLabel>
-                                <InputForm
-                                    {...register("email")}
-                                    type="email"
-                                    placeholder="E-mail"
-                                />
+                                <InputForm {...register("email")} type="email" placeholder="E-mail" />
                             </FormGroup>
 
                             <FormGroup>
                                 <FieldLabel>Senha</FieldLabel>
-                                <InputForm
-                                    {...register("senha")}
-                                    type="password"
-                                    placeholder="Senha"
-                                />
+                                <InputForm {...register("senha")} type="password" placeholder="Senha" />
                             </FormGroup>
                         </InputRow>
 
                         <InputRow>
                             <FormGroup>
                                 <FieldLabel>País de origem</FieldLabel>
-                                <InputForm
-                                    {...register("pais")}
-                                    type="text"
-                                    placeholder="País de origem"
-                                />
+                                <InputForm {...register("pais")} type="text" placeholder="País de origem" />
                             </FormGroup>
                             <FormGroup>
                                 <FieldLabel>Tipo de Usuario</FieldLabel>
@@ -155,16 +131,11 @@ const EditFormModal: React.FC<EditFormModalProps> = ({
                         <InputRow>
                             <FormGroup>
                                 <FieldLabel>Biografia</FieldLabel>
-                                <TextAreaForm
-                                    {...register("biografia")}
-                                    placeholder="Biografia"
-                                />
+                                <TextAreaForm {...register("biografia")} placeholder="Biografia" />
                             </FormGroup>
                         </InputRow>
                         <ButtonsRow>
-                            <ButtonConfirm type="submit">
-                                Confirmar
-                            </ButtonConfirm>
+                            <ButtonConfirm type="submit">Confirmar</ButtonConfirm>
                             <ButtonClose type="button" onClick={onClose}>
                                 Cancelar
                             </ButtonClose>

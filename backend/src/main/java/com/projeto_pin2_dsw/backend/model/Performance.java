@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,11 +40,14 @@ public class Performance /* extends Obra */ {
     private Set<Usuario> participacoes;
     
     private String url;
+    
+    @ManyToMany(targetEntity = Genero.class)
+    private Set<Genero> genero;
 
     public Performance() {
     }
 
-    public Performance(Integer id, Set<Usuario> autores, String titulo, Date dataLancamento, StatusObra status, Set<Usuario> participacoes, String url) {
+    public Performance(Integer id, Set<Usuario> autores, String titulo, Date dataLancamento, StatusObra status, Set<Usuario> participacoes, String url, Set<Genero> genero) {
         this.id = id;
         this.autores = autores;
         this.titulo = titulo;
@@ -51,6 +55,7 @@ public class Performance /* extends Obra */ {
         this.status = status;
         this.participacoes = participacoes;
         this.url = url;
+        this.genero = genero;
     }
 
     public Integer getId() {

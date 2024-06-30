@@ -36,6 +36,7 @@ import {
     Tab,
     ActiveTab,
     TabsList,
+    ProfileDefaultIcon,
 } from "./UserPage.styles";
 import mockData from "../../mocks/user.mock.json";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
@@ -43,12 +44,8 @@ import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui
 import CreateWorkModal from "../../components/Modals/CreateWork/CreateWork.ui";
 import {UserContext} from "../../hooks/UserContext";
 import defaultAlbumImage from "../../assets/images/default-cover.png";
-import {
-    getUser,
-    getUserAlbuns,
-    postAlbum,
-    postUser,
-} from "../../api/ApiService";
+import defaultUserIcon from "../../assets/images/default-user.jfif";
+import {getUser, getUserAlbuns, postAlbum, postUser} from "../../api/ApiService";
 import {useNavigate} from "react-router-dom";
 
 const UserPage: React.FC = () => {
@@ -61,13 +58,13 @@ const UserPage: React.FC = () => {
 
     useEffect(() => {
         // setUserData(mockData);
-        getUser(user.id).then((res: any) => {
+        getUser(user.usuario.id).then((res: any) => {
             setUserData(res.data);
         });
     }, []);
 
     useEffect(() => {
-        getUserAlbuns(user.id).then((res: any) => {
+        getUserAlbuns(user.usuario.id).then((res: any) => {
             setAlbumData(res.data);
         });
     }, [userData]);
@@ -149,47 +146,22 @@ const UserPage: React.FC = () => {
         <>
             <TopBar />
             <Container>
-                <ReturnToPrevPage url="/" />
+                <ReturnToPrevPage />
                 <UserInfoContainer>
                     <UserProfile>
-                        <UserPicture
-                            src={userData.profilePicture}
-                            alt="Profile"
-                        />
+                        {userData.profilePicture ? <UserPicture src={userData.profilePicture} alt="Profile" /> : <ProfileDefaultIcon src={defaultUserIcon} />}
                         <UserInfo>
                             <UserName>{userData?.username}</UserName>
-                            <UserType color={"#398ecc"}>
-                                {userData?.tipo}
-                            </UserType>
+                            <UserType color={"#398ecc"}>{userData?.tipo}</UserType>
                             <UserStats>
                                 <UserStatsItem>
-                                    <UserStatsNumber>
-                                        {userData.followers}
-                                    </UserStatsNumber>
-                                    Seguidores
-                                </UserStatsItem>
-                                <UserStatsItem>
-                                    <UserStatsNumber>
-                                        {userData.following}
-                                    </UserStatsNumber>
-                                    Seguindo
-                                </UserStatsItem>
-                                <UserStatsItem>
-                                    <UserStatsNumber>
-                                        {userData.likes}
-                                    </UserStatsNumber>{" "}
-                                    Curtiu
+                                    <UserStatsNumber>{albumData.length}</UserStatsNumber>
+                                    Obras
                                 </UserStatsItem>
                             </UserStats>
                             <UserInfoButton>
-                                <ButtonProfile
-                                    onClick={handleEditNotificationClick}
-                                >
-                                    Editar perfil
-                                </ButtonProfile>
-                                <ButtonProfile onClick={handleCreateWorkClick}>
-                                    Criar Obra
-                                </ButtonProfile>
+                                <ButtonProfile onClick={handleEditNotificationClick}>Editar perfil</ButtonProfile>
+                                <ButtonProfile onClick={handleCreateWorkClick}>Criar Obra</ButtonProfile>
                             </UserInfoButton>
                         </UserInfo>
                     </UserProfile>
@@ -200,59 +172,24 @@ const UserPage: React.FC = () => {
                             <DetailTable>
                                 <DetailRow>
                                     {/* TODO: fazer vir isso do mock */}
-                                    <DetailInfo>
-                                        Quantidade de Reviews:{" "}
-                                    </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.reviews}
-                                    </DetailValue>
+                                    <DetailInfo>Quantidade de Reviews: </DetailInfo>
+                                    <DetailValue>{mockData.reviews}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
                                     {/* TODO: fazer vir isso do mock */}
-                                    <DetailInfo>Média de Reviews: </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.reviewMedia}
-                                    </DetailValue>
-                                </DetailRow>
-                                <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
-                                    <DetailInfo>Outra informação: </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.exampleInfo1}
-                                    </DetailValue>
+                                    <DetailInfo>Média de nota das reviews: </DetailInfo>
+                                    <DetailValue>{mockData.reviewMedia}</DetailValue>
                                 </DetailRow>
                             </DetailTable>
                         </FirstColumn>
                         <NormalDivider />
                         <SecondColumn>
-                            <DetailTitle>Comentários</DetailTitle>
+                            <DetailTitle>Pontução</DetailTitle>
                             <DetailTable>
                                 <DetailRow>
                                     {/* TODO: fazer vir isso do mock */}
-                                    <DetailInfo>
-                                        Quantidade de Comentários:{" "}
-                                    </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.comments}
-                                    </DetailValue>
-                                </DetailRow>
-                                <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
-                                    <DetailInfo>
-                                        Outra informação01:{" "}
-                                    </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.exampleInfo2}
-                                    </DetailValue>
-                                </DetailRow>
-                                <DetailRow>
-                                    {/* TODO: fazer vir isso do mock */}
-                                    <DetailInfo>
-                                        Outra informação02:{" "}
-                                    </DetailInfo>
-                                    <DetailValue>
-                                        {mockData.exampleInfo3}
-                                    </DetailValue>
+                                    <DetailInfo>Média de pontuação: </DetailInfo>
+                                    <DetailValue>{mockData.comments}</DetailValue>
                                 </DetailRow>
                             </DetailTable>
                         </SecondColumn>
@@ -262,82 +199,38 @@ const UserPage: React.FC = () => {
                 <CarouselContainer>
                     <TabsContainer>
                         <TabsList>
-                            <Tab
-                                active={activeTab === "Albuns"}
-                                onClick={() => handleTabClick("Albuns")}
-                            >
+                            <Tab active={activeTab === "Albuns"} onClick={() => handleTabClick("Albuns")}>
                                 Albuns
                             </Tab>
-                            <Tab
-                                active={activeTab === "Participações"}
-                                onClick={() => handleTabClick("Participações")}
-                            >
+                            <Tab active={activeTab === "Participações"} onClick={() => handleTabClick("Participações")}>
                                 Participações
                             </Tab>
-                            <Tab
-                                active={activeTab === "Colaborações"}
-                                onClick={() => handleTabClick("Colaborações")}
-                            >
+                            <Tab active={activeTab === "Colaborações"} onClick={() => handleTabClick("Colaborações")}>
                                 Colaborações
                             </Tab>
                         </TabsList>
                     </TabsContainer>
-                    <CarouselItem>
-                        <CarouselTitle>Albuns do Usuario</CarouselTitle>
-                        <CustomSlider {...settings}>
-                            {albumData?.map((album: any, index: number) => (
-                                <div key={index}>
-                                    <AlbumImage
-                                        onClick={() =>
-                                            navigate(`/obra/${album.id}`)
-                                        }
-                                        src={
-                                            album.urlImagemCapa ||
-                                            defaultAlbumImage
-                                        }
-                                        alt={album.titulo}
-                                    />
-                                    <AlbumTitle>{album.titulo}</AlbumTitle>
-                                    <AlbumDate>
-                                        {album.dataLancamento}
-                                    </AlbumDate>
-                                </div>
-                            ))}
-                        </CustomSlider>
-                    </CarouselItem>
-
-                    {/* <CarouselItem>
-                        <CarouselTitle>Mais Avaliados</CarouselTitle>
-                        <CustomSlider {...settings}>
-                          
-                            {userData.albums.topRated.map(
-                                (album: any, index: number) => (
+                    {albumData.length > 0 ? (
+                        <CarouselItem>
+                            <CarouselTitle>Albuns do Usuario</CarouselTitle>
+                            <CustomSlider {...settings}>
+                                {albumData?.map((album: any, index: number) => (
                                     <div key={index}>
-                                        <AlbumImage
-                                            src={album.cover}
-                                            alt={album.title}
-                                        />
-                                        <AlbumTitle>{album.title}</AlbumTitle>
-                                        <AlbumDate>
-                                            {album.releaseDate}
-                                        </AlbumDate>
+                                        <AlbumImage onClick={() => navigate(`/obra/${album.id}`)} src={album.urlImagemCapa || defaultAlbumImage} alt={album.titulo} />
+                                        <AlbumTitle>{album.titulo}</AlbumTitle>
+                                        <AlbumDate>{album.dataLancamento}</AlbumDate>
                                     </div>
-                                )
-                            )}
-                        </CustomSlider>
-                    </CarouselItem> */}
+                                ))}
+                            </CustomSlider>
+                        </CarouselItem>
+                    ) : (
+                        <div style={{textAlign: "center"}}>Sem obras cadastradas desse usuario</div>
+                    )}
                 </CarouselContainer>
             </Container>
-            <EditFormModal
-                userData={user}
-                isOpen={isEditModalOpen}
-                onClose={handleCloseEditModal}
-            />
-            <CreateWorkModal
-                onCreate={handleCreateWork}
-                isOpen={isCreateWorkModalOpen}
-                onClose={handleCloseCreateWorkModal}
-            />
+            <EditFormModal userData={user} isOpen={isEditModalOpen} onClose={handleCloseEditModal} />
+            {/* @ts-ignore */}
+            <CreateWorkModal onCreate={handleCreateWork} isOpen={isCreateWorkModalOpen} onClose={handleCloseCreateWorkModal} />
         </>
     );
 };

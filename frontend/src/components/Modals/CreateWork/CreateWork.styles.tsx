@@ -102,7 +102,7 @@ export const ButtonClose = styled(OutlineButton).attrs({})`
 export const FormContent = styled.form`
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 10px;
     padding: 10px 50px;
 `;
 
@@ -192,4 +192,62 @@ export const Tab = styled.div.attrs({})<{active: boolean}>`
     align-items: center;
     font-weight: 600;
     color: #9747ff;
+`;
+
+export const AuthorInputContainer = styled.div`
+    margin-top: 20px;
+`;
+
+export const AuthorInput = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    input {
+        flex: 1;
+        padding: 10px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+`;
+
+export const AuthorListContainer = styled.div`
+    margin-top: 20px;
+`;
+
+export const AuthorListItem = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    input {
+        flex: 1;
+        padding: 10px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+`;
+
+export const AddAuthorButton = styled.button`
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+        background-color: #218838;
+    }
+`;
+
+export const RemoveAuthor = styled(OutlineButton)`
+    padding: 10px 20px;
+    font-size: 16px;
 `;

@@ -11,9 +11,7 @@ interface UserContextType {
     setUser: (user: User | null) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined | any>(
-    undefined
-);
+export const UserContext = createContext<UserContextType | undefined | any>(undefined);
 
 interface UserProviderProps {
     children: ReactNode;
@@ -33,9 +31,5 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
         }
     }, [user]);
 
-    return (
-        <UserContext.Provider value={{user, setUser}}>
-            {children}
-        </UserContext.Provider>
-    );
+    return <UserContext.Provider value={{user, setUser}}>{children}</UserContext.Provider>;
 };

@@ -44,6 +44,9 @@ public class Album /*extends Obra*/ {
         SINGLE
     }
     
+    @ManyToMany(targetEntity = Genero.class)
+    private Set<Genero> genero;
+    
 /*  
     @Enumerated(EnumType.STRING)
     private StatusObra status;
@@ -59,7 +62,7 @@ public class Album /*extends Obra*/ {
     public Album() {
     }
 
-    public Album(Integer id, Set<Usuario> autores, String titulo, LocalDate dataLancamento, List<Faixa> faixas, String urlImagemCapa, TipoAlbum tipo) {
+    public Album(Integer id, Set<Usuario> autores, String titulo, LocalDate dataLancamento, List<Faixa> faixas, String urlImagemCapa, TipoAlbum tipo, Set<Genero> genero) {
         this.id = id;
         this.autores = autores;
         this.titulo = titulo;
@@ -67,6 +70,7 @@ public class Album /*extends Obra*/ {
         this.faixas = faixas;
         this.urlImagemCapa = urlImagemCapa;
         this.tipo = tipo;
+        this.genero = genero;
     }
 
     public Integer getId() {

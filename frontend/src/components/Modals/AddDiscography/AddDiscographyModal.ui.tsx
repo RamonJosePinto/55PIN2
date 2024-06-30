@@ -18,6 +18,12 @@ import {
     FieldLabel,
     ImageUploadContainer,
     ImageUploadButton,
+    Table,
+    TableHead,
+    TableRow,
+    TableHeader,
+    TableBody,
+    TableCell,
 } from "./AddDiscographyModal.styles";
 import closeIcon from "../../../assets/icons/icon-close.svg";
 
@@ -33,13 +39,11 @@ interface FormInputs {
     segundos: number;
 }
 
-const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({
-    isOpen,
-    onClose,
-    onAddDiscography,
-}) => {
+const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({isOpen, onClose, onAddDiscography}) => {
     const {register, handleSubmit, reset} = useForm<FormInputs>();
     const [discography, setDiscography] = useState<any[]>([]);
+
+    console.log({discography});
 
     const onSubmit: SubmitHandler<FormInputs> = data => {
         setDiscography([...discography, data]);
@@ -96,16 +100,29 @@ const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({
                                     />
                                 </FormGroup>
                             </div>
-                            <ImageUploadContainer>
-                                <ImageUploadButton>
-                                    Upload da Capa
-                                </ImageUploadButton>
-                            </ImageUploadContainer>
+                            {discography.length > 0 && (
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableHeader>Número</TableHeader>
+                                            <TableHeader>Título</TableHeader>
+                                            <TableHeader>Duração</TableHeader>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {discography.map((track, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell>{track.numero}</TableCell>
+                                                <TableCell>{track.titulo}</TableCell>
+                                                <TableCell>{track.segundos}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            )}
                         </InputRow>
                         <ButtonsRow>
-                            <ButtonConfirm type="submit">
-                                Adicionar Faixa
-                            </ButtonConfirm>
+                            <ButtonConfirm type="submit">Adicionar Faixa</ButtonConfirm>
                             <ButtonClose type="button" onClick={handleClose}>
                                 Cancelar
                             </ButtonClose>

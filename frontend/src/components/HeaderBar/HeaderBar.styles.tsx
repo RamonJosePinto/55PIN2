@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {ProfileDefaultIcon} from "../../pages/UserPage/UserPage.styles";
 
 export const TopBarContainer = styled.div`
     display: flex;
@@ -79,4 +80,9 @@ export const SearchIconButton = styled.img.attrs({
     width: 25px;
     height: 25px;
     cursor: pointer;
+`;
+
+export const DefaultProfileIcon = styled(ProfileDefaultIcon).attrs({})`
+    width: 40px;
+    height: 40px;
 `;

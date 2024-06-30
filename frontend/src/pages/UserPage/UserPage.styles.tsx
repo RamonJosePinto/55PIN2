@@ -226,3 +226,10 @@ export const UserType = styled.div.attrs((props: {color?: string}) => ({
     font-size: 16px;
     font-weight: 600;
 `;
+
+export const ProfileDefaultIcon = styled.img.attrs({})`
+    width: 140px;
+    height: 140px;
+    border: 1px solid;
+    border-radius: 50%;
+`;

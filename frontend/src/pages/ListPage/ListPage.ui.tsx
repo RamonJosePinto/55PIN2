@@ -95,6 +95,11 @@ const ListPage = () => {
         }
     });
 
+    const filterMapper: any = {
+        genero: "Gênero",
+        anoLancamento: "Ano Lançamento",
+    };
+
     const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setSortOrder(event.target.value);
     };
@@ -103,95 +108,45 @@ const ListPage = () => {
         <>
             <TopBar />
             <Container>
-                <ReturnToPrevPage url="/" />
+                <ReturnToPrevPage />
                 <Content>
                     <FilterBlock>
                         <FilterList>
                             {filtrosList &&
-                                filtrosList.map(
-                                    (filtro: any, index: number) => (
-                                        <FilterItem key={index}>
-                                            <FilterTitle
-                                                onClick={() =>
-                                                    toggleFilter(filtro)
-                                                }
-                                            >
-                                                {filtro}
-                                                {checkFilterDisplay(filtro) ? (
-                                                    <IconUp src={iconUpSrc} />
-                                                ) : (
-                                                    <IconDown
-                                                        src={iconDownSrc}
-                                                    />
-                                                )}
-                                            </FilterTitle>
-                                            {checkFilterDisplay(filtro) && (
-                                                <FilterItemList>
-                                                    {filtros[filtro].map(
-                                                        (
-                                                            item: any,
-                                                            index: number
-                                                        ) => (
-                                                            <Item key={index}>
-                                                                <ItemLabel
-                                                                    filterFor={
-                                                                        item
-                                                                    }
-                                                                >
-                                                                    {item}
-                                                                </ItemLabel>
-                                                                <ItemInput
-                                                                    id={item}
-                                                                />
-                                                            </Item>
-                                                        )
-                                                    )}
-                                                </FilterItemList>
-                                            )}
-                                        </FilterItem>
-                                    )
-                                )}
+                                filtrosList.map((filtro: any, index: number) => (
+                                    <FilterItem key={index}>
+                                        <FilterTitle onClick={() => toggleFilter(filtro)}>
+                                            {filterMapper[filtro]}
+                                            {checkFilterDisplay(filtro) ? <IconUp src={iconUpSrc} /> : <IconDown src={iconDownSrc} />}
+                                        </FilterTitle>
+                                        {checkFilterDisplay(filtro) && (
+                                            <FilterItemList>
+                                                {filtros[filtro].map((item: any, index: number) => (
+                                                    <Item key={index}>
+                                                        <ItemLabel filterFor={item}>{item}</ItemLabel>
+                                                        <ItemInput id={item} />
+                                                    </Item>
+                                                ))}
+                                            </FilterItemList>
+                                        )}
+                                    </FilterItem>
+                                ))}
                         </FilterList>
                     </FilterBlock>
                     <ListBlock>
                         <ListHeader>
-                            <ListTitle>
-                                {searchTerm === "todos-albuns"
-                                    ? "Todos Albuns"
-                                    : searchTerm}
-                            </ListTitle>
-                            <ListSelect
-                                value={sortOrder}
-                                onChange={handleSortChange}
-                            >
-                                <ListSelectOption value="Mais recentes">
-                                    Mais recentes
-                                </ListSelectOption>
-                                <ListSelectOption value="Mais antigos">
-                                    Mais antigos
-                                </ListSelectOption>
+                            <ListTitle>{searchTerm === "todos-albuns" ? "Todos Albuns" : searchTerm}</ListTitle>
+                            <ListSelect value={sortOrder} onChange={handleSortChange}>
+                                <ListSelectOption value="Mais recentes">Mais recentes</ListSelectOption>
+                                <ListSelectOption value="Mais antigos">Mais antigos</ListSelectOption>
                             </ListSelect>
                         </ListHeader>
                         <ListContent>
                             {sortedAlbums.map((album: any, index: number) => (
-                                <ListItem
-                                    key={index}
-                                    onClick={() =>
-                                        navigate(`/obra/${album.id}`)
-                                    }
-                                >
-                                    <AlbumImage
-                                        src={
-                                            album.urlImagemCapa
-                                                ? `/${album.urlImagemCapa}`
-                                                : defaultAlbumImage
-                                        }
-                                        alt={album.titulo}
-                                    />
+                                <ListItem key={index} onClick={() => navigate(`/obra/${album.id}`)}>
+                                    <AlbumImage src={album.urlImagemCapa ? `/${album.urlImagemCapa}` : defaultAlbumImage} alt={album.titulo} />
                                     <AlbumTitle>{album.titulo}</AlbumTitle>
-                                    <AlbumDate>
-                                        {album.dataLancamento}
-                                    </AlbumDate>
+                                    <AlbumDate>{album.dataLancamento}</AlbumDate>
                                 </ListItem>
                             ))}
                         </ListContent>

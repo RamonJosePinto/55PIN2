@@ -3,6 +3,7 @@ import OutlineButton from "../../components/Buttons/OutlineButton.ui";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import {ProfileDefaultIcon} from "../UserPage/UserPage.styles";
 
 export const Container = styled.div.attrs({
     className: "container",
@@ -84,6 +85,7 @@ export const Album = styled.div`
 export const WorkPicture = styled.img`
     width: 140px;
     height: 140px;
+    border-radius: 10px;
 `;
 
 export const Column = styled.div``;
@@ -111,6 +113,7 @@ export const SecondColumn = styled(Column)`
     display: flex;
     justify-content: center;
     align-items: center;
+    flex: 1;
 `;
 
 export const DetailTitle = styled.h6`
@@ -252,7 +255,6 @@ export const CommentList = styled.div`
 
 export const CommentSectionTitle = styled.h2`
     color: #3b3643;
-    margin-bottom: 50px;
 `;
 
 export const Comment = styled.div`
@@ -273,6 +275,8 @@ export const AuthorImage = styled.img`
     width: 70px;
     height: 70px;
     margin-right: 15px;
+    border-radius: 50%;
+    border: 1px solid;
 `;
 
 export const CommentAuthorInfo = styled.div`
@@ -362,3 +366,25 @@ export const ReviewNota = styled.div.attrs({})`
 export const ReviewNotaText = styled.div.attrs({})`
     font-size: 18px;
 `;
+
+export const CommentTitleSection = styled.div.attrs({})`
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 50px;
+`;
+
+export const DefaultProfileIcon = styled(ProfileDefaultIcon).attrs({})`
+    width: 75px;
+    height: 75px;
+    margin-right: 15px;
+`;
+
+export const ReviewSelect = styled.select`
+    border: 2px solid #9747ff;
+    border-radius: 5px;
+    color: #3b3643;
+    padding: 0px 15px;
+    cursor: pointer;
+`;
+
+export const ReviewSelectOption = styled.option``;
