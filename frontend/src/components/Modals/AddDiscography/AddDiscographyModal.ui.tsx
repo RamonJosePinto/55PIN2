@@ -16,8 +16,6 @@ import {
     ButtonsRow,
     FormGroup,
     FieldLabel,
-    ImageUploadContainer,
-    ImageUploadButton,
     Table,
     TableHead,
     TableRow,

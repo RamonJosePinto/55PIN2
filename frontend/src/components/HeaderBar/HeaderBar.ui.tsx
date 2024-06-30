@@ -1,11 +1,9 @@
 import React, {useContext, useState} from "react";
-import NotificationBellIcon from "../../assets/icons/notification-icon.svg";
 import {
     Container,
     DefaultProfileIcon,
     Menu,
     MenuContainer,
-    NotificationIcon,
     ProfileContainer,
     ProfileName,
     ProfileNotificationContainer,
@@ -19,7 +17,6 @@ import NotificationModal from "../Modals/Notification/NotificationModal.ui";
 import {useNavigate} from "react-router-dom";
 import SearchIcon from "../../assets/icons/icon-search.svg";
 import {UserContext} from "../../hooks/UserContext";
-import {ProfileDefaultIcon} from "../../pages/UserPage/UserPage.styles";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
 import {logout} from "../../api/ApiService";
 
