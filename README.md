@@ -1,5 +1,14 @@
-Vídeo da apresentação do sistema:
+Vídeo da apresentação do sistema: 
+  https://youtu.be/SLKTkae3q0w
 
+Documento de especificação do sistema e requisitos (feito para 55PIN2, mas pode esclarecer o propósito do sistema):
+  https://drive.google.com/file/d/1Ohv4RdQnXVqcxiCT9uiv8UEOOxjaUTC1/view?usp=drive_link
+
+Observações:
+  O projeto foi feito visando as disciplinas de 55PIN2 e 55DSW. Na primeira disciplina, foi construído um documento com 
+  especificando o projeto. Entretanto, nem todos os requisitos descritos foram implementados até o momento.
+
+=========
 
 Instruções para rodar o projeto:
 
