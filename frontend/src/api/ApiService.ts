@@ -11,7 +11,7 @@ baseURL.interceptors.request.use(
 
         // Adiciona o SessionId no cabeçalho, se disponível e se não for a requisição de login
         if (user && user.id && !config.url?.includes("/login")) {
-            config.headers["SessionId"] = user.id;
+            config.headers["Authorization"] = user.id;
         }
 
         return config;
@@ -21,18 +21,7 @@ baseURL.interceptors.request.use(
     }
 );
 
-<<<<<<< HEAD
 export const getUser = (id: number) => baseURL.get(`/users/${id}`);
-=======
-export const getUser = (id: number) =>
-    baseURL.get(`/users/${id}`, {
-        headers: {
-            Authorization: "id",
-            Teste: "teste",
-        },
-    });
-
->>>>>>> a1522b85491483baf084c6e9e35158d2bb9ac0bd
 export const getUserAlbuns = (id: number) => baseURL.get(`/users/${id}/albums`);
 export const postUser = (userData: any) =>
     baseURL.post(`/users`, {
@@ -82,6 +71,16 @@ export const putUser = (id: number, userData: any) =>
         biografia: userData.biografia,
         tipo: userData.tipo,
     });
+
+export const uploadUserImage = (id: number, imageFile: File) => {
+    const formData = new FormData();
+    formData.append("imagem", imageFile);
+    return baseURL.put(`/users/${id}/imagem`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};
 
 export const getSearchAlbums = (title: string) => baseURL.get(`/albums/search/${title}`);
 
@@ -136,10 +135,7 @@ export const login = (username: string, password: string) => {
 };
 
 export const logout = (id: number) => baseURL.post(`/users/${id}/logout`);
-<<<<<<< HEAD
-=======
 
 export const getAllGenders = () => baseURL.get("/genders");
 
 export const getUserPerformances = (userId: number) => baseURL.get(`/users/${userId}/perfomances`);
->>>>>>> a1522b85491483baf084c6e9e35158d2bb9ac0bd
