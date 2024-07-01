@@ -44,6 +44,7 @@ import defaultAlbumImage from "../../assets/images/default-cover.png";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
 import {getUser, getUserAlbuns, getUserPerformances, postAlbum} from "../../api/ApiService";
 import {useNavigate} from "react-router-dom";
+import teste from "../../assets/userImages/users/1.jpg";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -154,7 +155,7 @@ const UserPage: React.FC = () => {
                 <UserInfoContainer>
                     <UserProfile>
                         {userData.caminhoImagem ? (
-                            <UserPicture src={`../../assets/userImages/${userData.caminhoImagem}`.replace(/\\/g, "/")} alt="Profile" />
+                            <UserPicture src={`/src/assets/userImages/${userData.caminhoImagem}`} alt="Profile" />
                         ) : (
                             <ProfileDefaultIcon src={defaultUserIcon} />
                         )}

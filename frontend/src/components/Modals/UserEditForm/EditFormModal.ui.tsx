@@ -99,7 +99,7 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}
                     </HeaderModal>
 
                     <ImageEditContainer>
-                        <ActualUserImage src={userFormData.caminhoImagem ? `..\\..\\assets\\userImages\\${userFormData.caminhoImagem}` : defaultUserIcon} />
+                        <ActualUserImage src={userFormData.caminhoImagem ? `/src/assets/userImages/${userFormData.caminhoImagem}` : defaultUserIcon} />
                         <EditImage>
                             <input type="file" accept="image/*" onChange={handleImageChange} />
                         </EditImage>

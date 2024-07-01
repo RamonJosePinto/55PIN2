@@ -245,7 +245,7 @@ const WorkPage = () => {
                                     <Comment>
                                         <CommentHeader>
                                             {review.reviewer.caminhoImagem ? (
-                                                <AuthorImage src={`../../assets/userImages/${review.reviewer.caminhoImagem}`} />
+                                                <AuthorImage src={`/src/assets/userImages/${review.reviewer.caminhoImagem}`} />
                                             ) : (
                                                 <DefaultProfileIcon src={defaultUserIcon} />
                                             )}
@@ -276,7 +276,9 @@ const WorkPage = () => {
                                         review.comentarios.map((comment: any, commentIndex: any) => (
                                             <ReviewComment className="review-comment" key={commentIndex}>
                                                 <CommentHeader>
-                                                    <AuthorImage src={comment.reviewer?.imageUrl || defaultUserIcon} />
+                                                    <AuthorImage
+                                                        src={comment.reviewer?.caminhoImagem ? `/src/assets/userImages/${comment.reviewer?.caminhoImagem}` : defaultUserIcon}
+                                                    />
                                                     <CommentAuthorInfo>
                                                         <CommentAuthor>{comment.reviewer?.nome}</CommentAuthor>
                                                         <CommentDate>{`${formatDateTime(comment.dataHora)}`}</CommentDate>

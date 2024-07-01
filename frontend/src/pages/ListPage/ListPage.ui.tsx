@@ -167,7 +167,7 @@ const ListPage = () => {
                         </ListHeader>
                         <ListContent>
                             {sortedAlbums.map((album: any, index: number) => (
-                                <ListItem key={index} onClick={() => navigate(`/obra/${album.id}`)}>
+                                <ListItem key={index} onClick={() => navigate(`/obra/${album.id}`, {state: {type: "Albuns"}})}>
                                     <AlbumImage src={album.urlImagemCapa ? `/${album.urlImagemCapa}` : defaultAlbumImage} alt={album.titulo} />
                                     <AlbumTitle>{album.titulo}</AlbumTitle>
                                     <AlbumDate>{album.dataLancamento}</AlbumDate>
