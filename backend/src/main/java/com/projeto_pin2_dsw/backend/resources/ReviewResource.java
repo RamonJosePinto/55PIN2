@@ -28,10 +28,15 @@ public class ReviewResource {
     @Autowired
     private ReviewRepository reviewRepository;
     
-    @PostMapping
-    @Transactional
-    public ResponseEntity<Review> createReview(@RequestBody Review review) {
-        Review savedReview = this.reviewRepository.save(review);
+    @PostMapping("/album")
+    public ResponseEntity<Review> createAlbumReview(@RequestBody Review review) {
+        Review savedReview = reviewRepository.save(review);
+        return ResponseEntity.ok(savedReview);
+    }
+
+    @PostMapping("/performance")
+    public ResponseEntity<Review> createPerformanceReview(@RequestBody Review review) {
+        Review savedReview = reviewRepository.save(review);
         return ResponseEntity.ok(savedReview);
     }
     
@@ -44,6 +49,11 @@ public class ReviewResource {
     @GetMapping("/album/{albumId}")
     public List<Review> getReviewsByAlbumId(@PathVariable Long albumId) {
         return reviewRepository.findByAlbumId(albumId);
+    }
+    
+    @GetMapping("/performance/{performanceId}")
+    public List<Review> getReviewsByPerformanceId(@PathVariable int performanceId) {
+        return reviewRepository.findByPerformanceId(performanceId);
     }
     
 }

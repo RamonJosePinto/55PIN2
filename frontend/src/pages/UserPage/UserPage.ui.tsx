@@ -42,29 +42,34 @@ import CreateWorkModal from "../../components/Modals/CreateWork/CreateWork.ui";
 import {UserContext} from "../../hooks/UserContext";
 import defaultAlbumImage from "../../assets/images/default-cover.png";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
-import {getUser, getUserAlbuns, postAlbum} from "../../api/ApiService";
+import {getUser, getUserAlbuns, getUserPerformances, postAlbum} from "../../api/ApiService";
 import {useNavigate} from "react-router-dom";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
-    const [albumData, setAlbumData] = useState<any>([]);
+    const [obraData, setobraData] = useState<any>([]);
     const [activeTab, setActiveTab] = useState("Albuns");
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isCreateWorkModalOpen, setIsCreateWorkModalOpen] = useState(false); // Novo estado
+    const [isCreateWorkModalOpen, setIsCreateWorkModalOpen] = useState(false);
     const {user} = useContext(UserContext);
 
     useEffect(() => {
-        // setUserData(mockData);
         getUser(user.usuario.id).then((res: any) => {
             setUserData(res.data);
         });
     }, []);
 
     useEffect(() => {
-        getUserAlbuns(user.usuario.id).then((res: any) => {
-            setAlbumData(res.data);
-        });
-    }, [userData]);
+        if (activeTab === "Albuns") {
+            getUserAlbuns(user.usuario.id).then((res: any) => {
+                setobraData(res.data);
+            });
+        } else {
+            getUserPerformances(user.usuario.id).then((res: any) => {
+                setobraData(res.data);
+            });
+        }
+    }, [userData, activeTab]);
 
     const navigate = useNavigate();
 
@@ -152,7 +157,7 @@ const UserPage: React.FC = () => {
                             <UserType color={"#398ecc"}>{userData?.tipo}</UserType>
                             <UserStats>
                                 <UserStatsItem>
-                                    <UserStatsNumber>{albumData.length}</UserStatsNumber>
+                                    <UserStatsNumber>{obraData.length}</UserStatsNumber>
                                     Obras
                                 </UserStatsItem>
                             </UserStats>
@@ -165,28 +170,32 @@ const UserPage: React.FC = () => {
                     <DividerFull />
                     <UserDetails>
                         <FirstColumn>
-                            <DetailTitle>Reviews</DetailTitle>
+                            <DetailTitle>Informações</DetailTitle>
                             <DetailTable>
                                 <DetailRow>
-                                    <DetailInfo>Quantidade de Reviews: </DetailInfo>
-                                    <DetailValue>{mockData.reviews}</DetailValue>
+                                    <DetailInfo>Nome completo: </DetailInfo>
+                                    <DetailValue>{userData?.nome}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    <DetailInfo>Média de nota das reviews: </DetailInfo>
-                                    <DetailValue>{mockData.reviewMedia}</DetailValue>
+                                    <DetailInfo>Pais: </DetailInfo>
+                                    <DetailValue>{userData?.pais}</DetailValue>
+                                </DetailRow>
+                                <DetailRow>
+                                    <DetailInfo>Email: </DetailInfo>
+                                    <DetailValue>{userData?.email}</DetailValue>
                                 </DetailRow>
                             </DetailTable>
                         </FirstColumn>
                         <NormalDivider />
-                        <SecondColumn>
+                        {/* <SecondColumn>
                             <DetailTitle>Pontução</DetailTitle>
                             <DetailTable>
                                 <DetailRow>
-                                    <DetailInfo>Média de pontuação: </DetailInfo>
-                                    <DetailValue>{mockData.comments}</DetailValue>
+                                    <DetailInfo>Email: </DetailInfo>
+                                    <DetailValue>{userData?.pais}</DetailValue>
                                 </DetailRow>
                             </DetailTable>
-                        </SecondColumn>
+                        </SecondColumn> */}
                     </UserDetails>
                 </UserInfoContainer>
 
@@ -196,21 +205,22 @@ const UserPage: React.FC = () => {
                             <Tab active={activeTab === "Albuns"} onClick={() => handleTabClick("Albuns")}>
                                 Albuns
                             </Tab>
-                            <Tab active={activeTab === "Participações"} onClick={() => handleTabClick("Participações")}>
-                                Participações
-                            </Tab>
-                            <Tab active={activeTab === "Colaborações"} onClick={() => handleTabClick("Colaborações")}>
-                                Colaborações
+                            <Tab active={activeTab === "Performances"} onClick={() => handleTabClick("Performances")}>
+                                Performances
                             </Tab>
                         </TabsList>
                     </TabsContainer>
-                    {albumData.length > 0 ? (
+                    {obraData.length > 0 ? (
                         <CarouselItem>
-                            <CarouselTitle>Albuns do Usuario</CarouselTitle>
+                            <CarouselTitle>{activeTab === "Albuns" ? "Albuns do Usuario" : "Performances do Usuario"}</CarouselTitle>
                             <CustomSlider {...settings}>
-                                {albumData?.map((album: any, index: number) => (
+                                {obraData?.map((album: any, index: number) => (
                                     <div key={index}>
-                                        <AlbumImage onClick={() => navigate(`/obra/${album.id}`)} src={album.urlImagemCapa || defaultAlbumImage} alt={album.titulo} />
+                                        <AlbumImage
+                                            onClick={() => navigate(`/obra/${album.id}`, {state: {type: activeTab === "Albuns" ? "Albuns" : "Performances"}})}
+                                            src={album.urlImagemCapa || defaultAlbumImage}
+                                            alt={album.titulo}
+                                        />
                                         <AlbumTitle>{album.titulo}</AlbumTitle>
                                         <AlbumDate>{album.dataLancamento}</AlbumDate>
                                     </div>
@@ -218,7 +228,7 @@ const UserPage: React.FC = () => {
                             </CustomSlider>
                         </CarouselItem>
                     ) : (
-                        <div style={{textAlign: "center"}}>Sem obras cadastradas desse usuario</div>
+                        <div style={{textAlign: "center"}}>Sem {activeTab.toLowerCase()} cadastradas desse usuario</div>
                     )}
                 </CarouselContainer>
             </Container>

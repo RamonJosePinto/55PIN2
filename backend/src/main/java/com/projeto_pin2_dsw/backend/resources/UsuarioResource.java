@@ -1,6 +1,7 @@
 package com.projeto_pin2_dsw.backend.resources;
 
 import com.projeto_pin2_dsw.backend.model.Album;
+import com.projeto_pin2_dsw.backend.model.Performance;
 import com.projeto_pin2_dsw.backend.model.Sessao;
 import com.projeto_pin2_dsw.backend.model.Usuario;
 import com.projeto_pin2_dsw.backend.repository.SessaoRepository;
@@ -77,6 +78,16 @@ public class UsuarioResource {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+    
+    @GetMapping("/{id}/perfomances")
+    public ResponseEntity<Set<Performance>> getPerformancesDoUsuario(@PathVariable int id) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
+        if (usuarioOptional.isPresent()) {
+            return ResponseEntity.ok(usuarioOptional.get().getPerformances());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Usuario> postUsuario(@RequestBody @Valid Usuario usuario) {
@@ -111,7 +122,7 @@ public class UsuarioResource {
     public ResponseEntity logout(@PathVariable int id) {
         Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
         if (!usuarioOp.isPresent())
-            return null;
+            return null;	
 
         Usuario usuario = usuarioOp.get();
 

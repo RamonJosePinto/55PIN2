@@ -21,7 +21,18 @@ baseURL.interceptors.request.use(
     }
 );
 
+<<<<<<< HEAD
 export const getUser = (id: number) => baseURL.get(`/users/${id}`);
+=======
+export const getUser = (id: number) =>
+    baseURL.get(`/users/${id}`, {
+        headers: {
+            Authorization: "id",
+            Teste: "teste",
+        },
+    });
+
+>>>>>>> a1522b85491483baf084c6e9e35158d2bb9ac0bd
 export const getUserAlbuns = (id: number) => baseURL.get(`/users/${id}/albums`);
 export const postUser = (userData: any) =>
     baseURL.post(`/users`, {
@@ -58,6 +69,7 @@ export const postPerformance = (performance: any) =>
         dataLancamento: performance.dataLancamento,
         status: performance.status,
         autores: performance.autores,
+        url: performance.url,
     });
 
 export const putUser = (id: number, userData: any) =>
@@ -75,8 +87,18 @@ export const getSearchAlbums = (title: string) => baseURL.get(`/albums/search/${
 
 export const getAlbumById = (id: string) => baseURL.get(`/albums/${id}`);
 
-export const postReview = (review: any) =>
-    baseURL.post(`/reviews`, {
+export const getPerformanceById = (id: string) => baseURL.get(`/performances/${id}`);
+
+export const postPerformanceReview = (review: any) =>
+    baseURL.post(`/reviews/performance`, {
+        texto: review.texto,
+        nota: review.nota,
+        performance: {id: review.performance},
+        reviewer: {id: review.reviewer},
+    });
+
+export const postAlbumReview = (review: any) =>
+    baseURL.post(`/reviews/album`, {
         texto: review.texto,
         nota: review.nota,
         obra: {id: review.obra},
@@ -84,6 +106,7 @@ export const postReview = (review: any) =>
     });
 
 export const getReviewByIdAlbum = (albumId: string | undefined) => baseURL.get(`/reviews/album/${albumId}`);
+export const getReviewByIdPerformance = (performanceId: string | undefined) => baseURL.get(`/reviews/performance/${performanceId}`);
 
 export const postComment = (comment: any) => {
     return baseURL.post("/comentarios", {
@@ -113,3 +136,10 @@ export const login = (username: string, password: string) => {
 };
 
 export const logout = (id: number) => baseURL.post(`/users/${id}/logout`);
+<<<<<<< HEAD
+=======
+
+export const getAllGenders = () => baseURL.get("/genders");
+
+export const getUserPerformances = (userId: number) => baseURL.get(`/users/${userId}/perfomances`);
+>>>>>>> a1522b85491483baf084c6e9e35158d2bb9ac0bd

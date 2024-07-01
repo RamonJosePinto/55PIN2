@@ -16,4 +16,5 @@ import com.projeto_pin2_dsw.backend.model.Review;
  */
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 	  List<Review> findByAlbumId(Long obraId);
+	  List<Review> findByPerformanceId(int performanceId);
 }

@@ -154,7 +154,6 @@ const ListPage = () => {
                                     </FilterItemList>
                                 )}
                             </FilterItem>
-                            {/* Other filters can be added similarly */}
                         </FilterList>
                     </FilterBlock>
                     <ListBlock>
