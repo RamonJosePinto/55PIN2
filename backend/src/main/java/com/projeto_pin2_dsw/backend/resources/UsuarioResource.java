@@ -60,7 +60,7 @@ public class UsuarioResource {
 
     @GetMapping("/{id}")
     //@PostMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id, @RequestHeader("Authorization") String auth) {
+    public ResponseEntity<Usuario> getUsuarioById(@PathVariable int id, String auth) {
         Optional<Usuario> usuarioOptional = usuarioRepository.findById(id);
         if (usuarioOptional.isPresent()) {
             return ResponseEntity.ok(usuarioOptional.get());
@@ -95,7 +95,7 @@ public class UsuarioResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
     }
 
-    private boolean validarSessao(@RequestHeader("SessionId") String sessionId) {
+    private boolean validarSessao(String sessionId) {
         Optional<Sessao> sessaoOp = sessaoRepository.findTopByIdOrderByDataCriacaoDesc(sessionId);
         if (!sessaoOp.isPresent())
             return sessaoOp.get().isValida();

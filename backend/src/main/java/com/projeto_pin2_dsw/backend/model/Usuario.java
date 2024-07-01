@@ -29,10 +29,6 @@ public class Usuario {
     @JsonIgnore
     private Set<Performance> performances;
     
-//    @ManyToMany(mappedBy = "participacoesEspeciais")
-//    @JsonIgnore
-//    private Set<Faixa> participacoesEspeciais;
-    
     @Size(min = 3)
     private String username;
     
