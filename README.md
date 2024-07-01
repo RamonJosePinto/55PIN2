@@ -1,3 +1,6 @@
+Página do projeto no GitHub:
+  https://github.com/RamonJosePinto/55PIN2
+
 Vídeo da apresentação do sistema: 
   https://youtu.be/SLKTkae3q0w
 
