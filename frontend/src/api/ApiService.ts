@@ -11,7 +11,7 @@ baseURL.interceptors.request.use(
 
         // Adiciona o SessionId no cabeçalho, se disponível e se não for a requisição de login
         if (user && user.id && !config.url?.includes("/login")) {
-            config.headers["Authorization"] = user.id;
+            config.headers["SessionId"] = user.id;
         }
 
         return config;
@@ -21,13 +21,7 @@ baseURL.interceptors.request.use(
     }
 );
 
-export const getUser = (id: number) => baseURL.get(`/users/${id}`,         {
-    headers: {
-        Authorization: "id",
-        Teste: "teste"
-    },
-});
-
+export const getUser = (id: number) => baseURL.get(`/users/${id}`);
 export const getUserAlbuns = (id: number) => baseURL.get(`/users/${id}/albums`);
 export const postUser = (userData: any) =>
     baseURL.post(`/users`, {
@@ -39,16 +33,13 @@ export const postUser = (userData: any) =>
         biografia: userData.biography,
         tipo: userData.userType,
     });
-
 export const postAlbum = (album: any) =>
     baseURL.post(`/albums`, {
         titulo: album.name,
         dataLancamento: album.releaseYear,
         status: "APROVADA",
-        tipo: "EP", // TODO: Ver sobre
-        genero: album.genero.map((genero: any) => ({
-            nome: genero.nome,
-        })),
+        tipo: "EP", //TODO VER SOBRE
+        genero: album.genero,
         autores: album.autores.map((autor: any) => ({
             id: autor.id,
         })),
@@ -114,14 +105,11 @@ export const login = (username: string, password: string) => {
         {},
         {
             headers: {
-                Authorization: "teste",
                 Username: username,
-                Password: password
+                Password: password,
             },
         }
     );
 };
 
 export const logout = (id: number) => baseURL.post(`/users/${id}/logout`);
-
-export const getAllGenders = () => baseURL.get("/genders");

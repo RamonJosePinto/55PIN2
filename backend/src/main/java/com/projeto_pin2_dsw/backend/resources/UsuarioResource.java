@@ -15,10 +15,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -30,6 +36,9 @@ public class UsuarioResource {
 
     @Autowired
     private SessaoRepository sessaoRepository;
+   
+    @Value("${images_directory}")
+    private String IMAGES_DIR;
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUser(@PathVariable Integer id, @RequestBody Usuario updatedUser) {
@@ -74,21 +83,6 @@ public class UsuarioResource {
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioSalvo);
     }
-
-    // @PostMapping("/validatesession")
-    // private ResponseEntity<?> validarSessao(@RequestHeader("SessionId") String
-    // sessionId) {
-    // Optional<Sessao> sessaoOp =
-    // sessaoRepository.findTopByIdOrderByDataCriacaoDesc(sessionId);
-    // if (!sessaoOp.isPresent())
-    // return new ResponseEntity<Sessao>(HttpStatus.UNAUTHORIZED);
-    //
-    // Sessao sessao = sessaoOp.get();
-    // if (sessao.isValida())
-    // return new ResponseEntity<Sessao>(HttpStatus.OK);
-    // else
-    // return new ResponseEntity<Sessao>(HttpStatus.UNAUTHORIZED);
-    // }
 
     private boolean validarSessao(@RequestHeader("SessionId") String sessionId) {
         Optional<Sessao> sessaoOp = sessaoRepository.findTopByIdOrderByDataCriacaoDesc(sessionId);
@@ -153,7 +147,31 @@ public class UsuarioResource {
         return ResponseEntity.ok(autores);
     }
     
-    
+    @PutMapping("/{id}/imagem")
+    public ResponseEntity<String> atualizarImagemPerfil(@PathVariable int id, @RequestParam("imagem") MultipartFile imagem) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
+
+        if (!usuarioOpt.isPresent()) {
+            return new ResponseEntity<>("Usuário não encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        String nomeArquivo = "users\\" + id + ".jpg";
+        Path caminhoImagem = Paths.get(this.IMAGES_DIR + nomeArquivo);
+
+        System.out.println(caminhoImagem.toString());
+        
+        try {
+            Files.createDirectories(caminhoImagem.getParent());
+            imagem.transferTo(caminhoImagem.toFile());
+            usuario.setCaminhoImagem(caminhoImagem.toString());
+            usuarioRepository.save(usuario);
+            return new ResponseEntity<>("Imagem do perfil atualizada com sucesso", HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao salvar a imagem", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     // Future implementation for login feature
     // @PostMapping("/login")

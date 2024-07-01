@@ -40,6 +40,7 @@ public class Usuario {
     private String pais;
     private String senha;
     private String biografia;
+    private String caminhoImagem;
     
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipo;
@@ -64,6 +65,20 @@ public class Usuario {
         this.pais = pais;
         this.senha = senha;
         this.biografia = biografia;
+        this.tipo = tipo;
+    }
+
+    public Usuario(int id, Set<Album> albuns, Set<Performance> performances, String username, String nome, String email, String pais, String senha, String biografia, String caminhoImagem, TipoUsuario tipo) {
+        this.id = id;
+        this.albuns = albuns;
+        this.performances = performances;
+        this.username = username;
+        this.nome = nome;
+        this.email = email;
+        this.pais = pais;
+        this.senha = senha;
+        this.biografia = biografia;
+        this.caminhoImagem = caminhoImagem;
         this.tipo = tipo;
     }
 
@@ -145,6 +160,14 @@ public class Usuario {
 
     public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
+    }
+
+    public String getCaminhoImagem() {
+        return caminhoImagem;
+    }
+
+    public void setCaminhoImagem(String caminhoImagem) {
+        this.caminhoImagem = caminhoImagem;
     }
 
     @Override
