@@ -30,6 +30,9 @@ public class Review {
     
     @ManyToOne(targetEntity = Album.class)
     private Album album;
+    
+    @ManyToOne(targetEntity = Performance.class)
+    private Performance performance;
 
     private String texto;
     
@@ -101,7 +104,7 @@ public class Review {
 
     @Override
     public String toString() {
-        return "Review{" + "id=" + id + ", reviewer=" + reviewer + ", album=" + album + ", texto=" + texto + ", nota=" + nota + ", data=" + dataHora +", comentarios= "+comentarios+"}'";
+        return "Review{" + "id=" + id + ", reviewer=" + reviewer + ", album=" + album + ", texto=" + texto + ", nota=" + nota + ", data=" + dataHora +", comentarios= "+comentarios+", performances="+performance+"}'";
     }
 
 	public LocalDateTime getDataHora() {
@@ -118,6 +121,12 @@ public class Review {
 
 	public void setComentarios(List<Comentario> comentarios) {
 		this.comentarios = comentarios;
+	}
+	public Performance getPerformance() {
+		return performance;
+	}
+	public void setPerformance(Performance performance) {
+		this.performance = performance;
 	}
 	
 	

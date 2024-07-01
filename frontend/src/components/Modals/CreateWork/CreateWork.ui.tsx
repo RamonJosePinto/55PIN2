@@ -37,8 +37,6 @@ interface CreateWorkModalProps {
 interface AlbumFormInputs {
     name: string;
     releaseYear: string;
-    videoLink?: string;
-    specialParticipations: string;
     autores: string;
     genero: string;
 }
@@ -46,6 +44,7 @@ interface AlbumFormInputs {
 interface PerformanceFormInputs {
     title: string;
     releaseDate: string;
+    url: string;
     autores: string;
     genero: string;
 }
@@ -92,6 +91,7 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                 genero: generosArray,
                 autores: authorIds,
                 titulo: data.title,
+                url: data.url,
                 dataLancamento: data.releaseDate,
                 status: "APROVADA",
             };
@@ -171,14 +171,6 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                                             <InputForm {...registerAlbum("releaseYear", {required: true})} />
                                         </FormGroup>
                                         <FormGroup>
-                                            <FieldLabel>Link de Video (Opcional)</FieldLabel>
-                                            <InputForm {...registerAlbum("videoLink")} />
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <FieldLabel>Participações Especiais</FieldLabel>
-                                            <InputForm {...registerAlbum("specialParticipations", {required: true})} />
-                                        </FormGroup>
-                                        <FormGroup>
                                             <FieldLabel>Gêneros (separados por vírgula)</FieldLabel>
                                             <InputForm {...registerAlbum("genero", {required: true})} />
                                         </FormGroup>
@@ -218,6 +210,10 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                                         <FormGroup>
                                             <FieldLabel>Data de Lançamento</FieldLabel>
                                             <InputForm {...registerPerformance("releaseDate", {required: true})} />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <FieldLabel>Link de Video (Opcional)</FieldLabel>
+                                            <InputForm {...registerPerformance("url")} />
                                         </FormGroup>
                                         <FormGroup>
                                             <FieldLabel>Gêneros (separados por vírgula)</FieldLabel>

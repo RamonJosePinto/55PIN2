@@ -388,3 +388,7 @@ export const ReviewSelect = styled.select`
 `;
 
 export const ReviewSelectOption = styled.option``;
+
+export const LinkVideo = styled.a``;
+
+export {ProfileDefaultIcon};

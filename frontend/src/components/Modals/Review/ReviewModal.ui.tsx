@@ -22,7 +22,8 @@ import closeIcon from "../../../assets/icons/icon-close.svg";
 import * as yup from "yup";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {SubmitHandler, useForm} from "react-hook-form";
-import {postReview} from "../../../api/ApiService";
+import {postAlbumReview, postPerformanceReview} from "../../../api/ApiService";
+import {useLocation} from "react-router-dom";
 
 interface FormInputs {
     nota: number;
@@ -35,6 +36,9 @@ const ReviewModal: React.FC<{
     userId: number;
 }> = ({onClose, albumId, userId}) => {
     const maxLength = 300;
+    const location = useLocation();
+
+    const type = location.state.type;
 
     const schema = yup.object().shape({
         nota: yup
@@ -56,13 +60,24 @@ const ReviewModal: React.FC<{
     });
 
     const onSubmit: SubmitHandler<FormInputs> = data => {
-        const dataFormatted = {
-            reviewer: userId,
-            obra: albumId,
-            ...data,
-        };
-        console.log({dataFormatted});
-        postReview(dataFormatted);
+        console.log(type);
+        if (type === "Albuns") {
+            const dataFormatted = {
+                reviewer: userId,
+                obra: albumId,
+                ...data,
+            };
+            console.log({dataFormatted});
+            postAlbumReview(dataFormatted);
+        } else {
+            const dataFormatted = {
+                reviewer: userId,
+                performance: albumId,
+                ...data,
+            };
+            console.log({dataFormatted});
+            postPerformanceReview(dataFormatted);
+        }
         onClose();
     };
 

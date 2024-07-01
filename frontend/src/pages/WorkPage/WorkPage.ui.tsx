@@ -47,18 +47,19 @@ import {
     ReviewSelect,
     ReviewSelectOption,
     CommentTitleSection,
+    LinkVideo,
 } from "./WorkPage.styles";
 import {format} from "date-fns";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import ReviewModal from "../../components/Modals/Review/ReviewModal.ui";
 import CommentModal from "../../components/Modals/CommentModal/CommentModal.ui";
-import {useParams} from "react-router-dom";
-import {getAlbumById, getReviewByIdAlbum} from "../../api/ApiService";
+import {useLocation, useParams} from "react-router-dom";
+import {getAlbumById, getPerformanceById, getReviewByIdAlbum, getReviewByIdPerformance} from "../../api/ApiService";
 import {UserContext} from "../../hooks/UserContext";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
 import defaultAlbumImage from "../../assets/images/default-cover.png";
 
-const WorkPage: React.FC = () => {
+const WorkPage = () => {
     const [workData, setWorkData] = useState<any>(null);
     const [reviewData, setReviewData] = useState<any[]>([]);
     const [isModalOpen] = useState(false);
@@ -68,6 +69,11 @@ const WorkPage: React.FC = () => {
     const [sortOption, setSortOption] = useState("most_recent");
     const {id} = useParams();
     const {user} = useContext(UserContext);
+    const location = useLocation();
+
+    const type = location.state.type;
+
+    console.log({type});
 
     const handleReviewClick = () => {
         setIsReviewModalOpen(true);
@@ -112,22 +118,41 @@ const WorkPage: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            getAlbumById(id)
-                .then(res => {
-                    setWorkData(res.data);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+            if (type === "Albuns") {
+                getAlbumById(id)
+                    .then(res => {
+                        setWorkData(res.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
 
-            getReviewByIdAlbum(id)
-                .then(res => {
-                    const sortedReviews = sortReviews(res.data, "most_recent");
-                    setReviewData(sortedReviews);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
+                getReviewByIdAlbum(id)
+                    .then(res => {
+                        const sortedReviews = sortReviews(res.data, "most_recent");
+                        setReviewData(sortedReviews);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            } else {
+                getPerformanceById(id)
+                    .then(res => {
+                        setWorkData(res.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+
+                getReviewByIdPerformance(id)
+                    .then(res => {
+                        const sortedReviews = sortReviews(res.data, "most_recent");
+                        setReviewData(sortedReviews);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            }
         }
     }, [id]);
 
@@ -163,7 +188,7 @@ const WorkPage: React.FC = () => {
                         <WorkPicture src={workData.urlImagemCapa && workData.urlImagemCapa !== null ? "/" + workData.urlImagemCapa : defaultAlbumImage} alt="Profile" />
                         <WorkInfo>
                             <WorkName>{workData?.titulo}</WorkName>
-                            <WorkType color={"#398ecc"}>{workData?.tipo}</WorkType>
+                            <WorkType color={"#398ecc"}>{workData?.tipo || "Performance"}</WorkType>
                             <WorkStats>
                                 <WorkStatsItem>
                                     <WorkStatsNumber>{reviewData?.length}</WorkStatsNumber>
@@ -181,19 +206,15 @@ const WorkPage: React.FC = () => {
                             <DetailTable>
                                 <DetailRow>
                                     <DetailInfo>Autor: </DetailInfo>
-                                    <DetailValue>{workData?.autores[0]?.username}</DetailValue>
+                                    <DetailValue>{workData?.autores.map((autor: any) => autor.username).join(", ")}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
                                     <DetailInfo>Ano de Lançamento: </DetailInfo>
                                     <DetailValue>{workData.dataLancamento}</DetailValue>
                                 </DetailRow>
                                 <DetailRow>
-                                    <DetailInfo>{workData?.tipo === "EP" ? "Quantidade de Faixas:" : "Participações especiais:"}</DetailInfo>
-                                    <DetailValue>{workData?.tipo === "EP" ? workData?.faixas.length : "N/A"}</DetailValue>
-                                </DetailRow>
-                                <DetailRow>
-                                    <DetailInfo>Participações especiais: </DetailInfo>
-                                    <DetailValue>{"N/A"}</DetailValue>
+                                    <DetailInfo>{workData?.tipo === "EP" ? "Quantidade de Faixas:" : "Link para Vídeo:"}</DetailInfo>
+                                    {workData?.tipo === "EP" ? <DetailValue>{workData?.faixas.length}</DetailValue> : <LinkVideo href={workData?.url}>{workData?.url}</LinkVideo>}
                                 </DetailRow>
                             </DetailTable>
                         </FirstColumn>
