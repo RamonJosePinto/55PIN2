@@ -25,7 +25,8 @@ import {
 
 import userDataMock from "../../../mocks/userData.mock.json";
 import closeIcon from "../../../assets/icons/icon-close.svg";
-import {getUser, putUser} from "../../../api/ApiService";
+import {getUser, putUser, uploadUserImage} from "../../../api/ApiService";
+import defaultUserIcon from "../../../assets/images/default-user.jfif";
 
 interface EditFormModalProps {
     isOpen: boolean;
@@ -48,7 +49,8 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}
         defaultValues: userDataMock,
     });
 
-    const [userFormData, setUserFormData] = useState();
+    const [userFormData, setUserFormData] = useState<any>(null);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
     React.useEffect(() => {
         getUser(userData?.usuario.id)
@@ -61,16 +63,27 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}
         reset(userFormData); // Reset form with mock data when modal opens
     }, [reset, isOpen]);
 
-    const onSubmit: SubmitHandler<FormInputs> = data => {
-        // onClose();
-        console.log({data});
-        putUser(userData.usuario.id, data)
-            .then(res => {
-                window.alert("Deu boa");
-                console.log(res);
-            })
-            .catch(err => console.log(err));
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedImage(e.target.files[0]);
+        }
     };
+
+    const onSubmit: SubmitHandler<FormInputs> = async data => {
+        try {
+            await putUser(userData.usuario.id, data);
+            if (selectedImage) {
+                await uploadUserImage(userData.usuario.id, selectedImage);
+            }
+            window.alert("Perfil atualizado com sucesso!");
+            onClose();
+        } catch (error) {
+            console.error("Erro ao atualizar perfil", error);
+            window.alert("Erro ao atualizar perfil");
+        }
+    };
+
+    console.log({userFormData});
 
     if (!isOpen) return null;
 
@@ -86,8 +99,10 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}
                     </HeaderModal>
 
                     <ImageEditContainer>
-                        <ActualUserImage src={userDataMock.imageUrl} />
-                        <EditImage>Baixar imagem</EditImage>
+                        <ActualUserImage src={userFormData.caminhoImagem ? `..\\..\\assets\\userImages\\${userFormData.caminhoImagem}` : defaultUserIcon} />
+                        <EditImage>
+                            <input type="file" accept="image/*" onChange={handleImageChange} />
+                        </EditImage>
                     </ImageEditContainer>
 
                     <FormContent onSubmit={handleSubmit(onSubmit)}>

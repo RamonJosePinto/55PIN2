@@ -45,6 +45,7 @@ const ListPage = () => {
 
     useEffect(() => {
         fetchGenres();
+        setSelectedGenre(null);
         if (searchTerm) {
             if (searchTerm === "todos-albuns") {
                 getAllAlbum()

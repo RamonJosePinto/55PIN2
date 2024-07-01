@@ -40,6 +40,8 @@ const TopBar: React.FC = () => {
         setIsNotificationModalOpen(!isNotificatioModalOpen);
     };
 
+    console.log(user.usuario);
+
     return (
         <TopBarContainer>
             <Container>
@@ -58,7 +60,11 @@ const TopBar: React.FC = () => {
                     </MenuContainer>
                     <ProfileNotificationContainer>
                         <ProfileContainer onClick={() => navigate("/meus-dados")}>
-                            {user.usuario.profilePicture ? <ProfilePicture src={user.usuario.profilePicture} alt="Profile" /> : <DefaultProfileIcon src={defaultUserIcon} />}
+                            {user.usuario.caminhoImagem ? (
+                                <ProfilePicture src={`../../assets/userImages/${user.usuario.caminhoImagem}`} alt="Profile" />
+                            ) : (
+                                <DefaultProfileIcon src={defaultUserIcon} />
+                            )}
                             <ProfileName>{user?.usuario.username || "Anonimo"}</ProfileName>
                         </ProfileContainer>
                         <SearchBar type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Buscar" />

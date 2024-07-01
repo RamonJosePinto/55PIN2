@@ -244,7 +244,11 @@ const WorkPage = () => {
                                 <CoomentContainer key={reviewIndex}>
                                     <Comment>
                                         <CommentHeader>
-                                            {review.reviewer.imageUrl ? <AuthorImage src={review.reviewer.imageUrl} /> : <DefaultProfileIcon src={defaultUserIcon} />}
+                                            {review.reviewer.caminhoImagem ? (
+                                                <AuthorImage src={`../../assets/userImages/${review.reviewer.caminhoImagem}`} />
+                                            ) : (
+                                                <DefaultProfileIcon src={defaultUserIcon} />
+                                            )}
                                             <CommentAuthorInfo>
                                                 <CommentAuthor>{review.reviewer.nome}</CommentAuthor>
                                                 <CommentDate>{`${formatDateTime(review.dataHora)}`}</CommentDate>

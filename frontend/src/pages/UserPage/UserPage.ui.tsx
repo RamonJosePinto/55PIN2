@@ -53,6 +53,8 @@ const UserPage: React.FC = () => {
     const [isCreateWorkModalOpen, setIsCreateWorkModalOpen] = useState(false);
     const {user} = useContext(UserContext);
 
+    console.log({userData});
+
     useEffect(() => {
         getUser(user.usuario.id).then((res: any) => {
             setUserData(res.data);
@@ -151,7 +153,11 @@ const UserPage: React.FC = () => {
                 <ReturnToPrevPage />
                 <UserInfoContainer>
                     <UserProfile>
-                        {userData.profilePicture ? <UserPicture src={userData.profilePicture} alt="Profile" /> : <ProfileDefaultIcon src={defaultUserIcon} />}
+                        {userData.caminhoImagem ? (
+                            <UserPicture src={`../../assets/userImages/${userData.caminhoImagem}`.replace(/\\/g, "/")} alt="Profile" />
+                        ) : (
+                            <ProfileDefaultIcon src={defaultUserIcon} />
+                        )}
                         <UserInfo>
                             <UserName>{userData?.username}</UserName>
                             <UserType color={"#398ecc"}>{userData?.tipo}</UserType>
@@ -187,15 +193,6 @@ const UserPage: React.FC = () => {
                             </DetailTable>
                         </FirstColumn>
                         <NormalDivider />
-                        {/* <SecondColumn>
-                            <DetailTitle>Pontução</DetailTitle>
-                            <DetailTable>
-                                <DetailRow>
-                                    <DetailInfo>Email: </DetailInfo>
-                                    <DetailValue>{userData?.pais}</DetailValue>
-                                </DetailRow>
-                            </DetailTable>
-                        </SecondColumn> */}
                     </UserDetails>
                 </UserInfoContainer>
 
