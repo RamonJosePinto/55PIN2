@@ -8,6 +8,14 @@ Observações:
   O projeto foi feito visando as disciplinas de 55PIN2 e 55DSW. Na primeira disciplina, foi construído um documento com 
   especificando o projeto. Entretanto, nem todos os requisitos descritos foram implementados até o momento.
 
+  Atualmente o sistema permite:
+  * Cadastro, login e gerenciamento de perfil (com imagem de perfil).
+  * Cadstro de album e performance (com imagem de capa).
+  * Cadastro de review e comentário.
+  * Tela inicial com os álbuns cadastrados.
+  * Tela de usuário com os álbuns e performances cadastrados.
+  * Barra de pesquisa por álbum.
+
 =========
 
 Instruções para rodar o projeto:
