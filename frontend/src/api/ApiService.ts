@@ -82,6 +82,16 @@ export const uploadUserImage = (id: number, imageFile: File) => {
     });
 };
 
+export const uploadAlbumImage = (id: number, imageFile: File) => {
+    const formData = new FormData();
+    formData.append("imagem", imageFile);
+    return baseURL.put(`/albums/${id}/imagem`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};
+
 export const getSearchAlbums = (title: string) => baseURL.get(`/albums/search/${title}`);
 
 export const getAlbumById = (id: string) => baseURL.get(`/albums/${id}`);

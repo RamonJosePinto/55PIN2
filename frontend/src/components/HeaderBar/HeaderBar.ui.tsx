@@ -19,6 +19,7 @@ import SearchIcon from "../../assets/icons/icon-search.svg";
 import {UserContext} from "../../hooks/UserContext";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
 import {logout} from "../../api/ApiService";
+import teste from "../../assets/userImages/users/2.jpg";
 
 const TopBar: React.FC = () => {
     const [isNotificatioModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -61,7 +62,7 @@ const TopBar: React.FC = () => {
                     <ProfileNotificationContainer>
                         <ProfileContainer onClick={() => navigate("/meus-dados")}>
                             {user.usuario.caminhoImagem ? (
-                                <ProfilePicture src={`../../assets/userImages/${user.usuario.caminhoImagem}`} alt="Profile" />
+                                <ProfilePicture src={`/src/assets/userImages/${user.usuario.caminhoImagem}`} alt="Profile" />
                             ) : (
                                 <DefaultProfileIcon src={defaultUserIcon} />
                             )}
