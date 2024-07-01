@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
 
@@ -32,12 +33,18 @@ public class Usuario {
 //    @JsonIgnore
 //    private Set<Faixa> participacoesEspeciais;
     
-//    @Column(unique = true)
+    @Size(min = 3)
     private String username;
     
+    @Size(min = 3)
     private String nome;
+    
+    @Size(min = 3)
     private String email;
+    
     private String pais;
+    
+    @Size(min = 3)
     private String senha;
     private String biografia;
     private String caminhoImagem;

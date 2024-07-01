@@ -42,7 +42,7 @@ public class UsuarioResource {
     private String IMAGES_DIR;
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUser(@PathVariable Integer id, @RequestBody Usuario updatedUser) {
+    public ResponseEntity<Usuario> updateUser(@PathVariable Integer id, @RequestBody @Valid Usuario updatedUser) {
         return usuarioRepository.findById(id)
                 .map(user -> {
                     user.setUsername(updatedUser.getUsername());
