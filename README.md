@@ -13,7 +13,7 @@ Observações:
 
   Atualmente o sistema permite:
   * Cadastro, login e gerenciamento de perfil (com imagem de perfil).
-  * Cadstro de album e performance (com imagem de capa).
+  * Cadstro de album e performance.
   * Cadastro de review e comentário.
   * Tela inicial com os álbuns cadastrados.
   * Tela de usuário com os álbuns e performances cadastrados.
