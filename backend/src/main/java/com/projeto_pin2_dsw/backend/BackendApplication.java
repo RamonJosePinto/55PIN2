@@ -30,7 +30,7 @@ public class BackendApplication {
             }
             
             public void addInterceptors(InterceptorRegistry registry) {
-                registry.addInterceptor(sessionInterceptor).addPathPatterns("/**").excludePathPatterns("/users/login");;
+                registry.addInterceptor(sessionInterceptor).addPathPatterns("/**").excludePathPatterns("/users/login", "/users");
             }
             
         };
