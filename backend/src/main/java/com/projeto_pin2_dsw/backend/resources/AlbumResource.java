@@ -11,16 +11,23 @@ import com.projeto_pin2_dsw.backend.repository.AlbumRepository;
 import com.projeto_pin2_dsw.backend.repository.FaixaRepository;
 import com.projeto_pin2_dsw.backend.repository.GeneroRepository;
 import com.projeto_pin2_dsw.backend.repository.UsuarioRepository;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/albums")
@@ -38,6 +45,9 @@ public class AlbumResource {
     
     @Autowired
     private GeneroRepository generoRepository;
+    
+    @Value("${images_directory}")
+    private String IMAGES_DIR;
     
     @GetMapping("/search/{titulo}")
     public ResponseEntity<List<Album>> searchAlbums(@PathVariable String titulo) {
@@ -111,6 +121,32 @@ public class AlbumResource {
             faixaRepository.saveAll(faixas);
 
         return ResponseEntity.ok(savedAlbum);
+    }
+    
+    @PutMapping("/{id}/imagem")
+    public ResponseEntity<String> atualizarImagemCapa(@PathVariable int id, @RequestParam("imagem") MultipartFile imagem) {
+        Optional<Album> albumOp = albumRepository.findById(id);
+
+        if (!albumOp.isPresent()) {
+            return new ResponseEntity<>("Álbum não encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        Album album = albumOp.get();
+        String nomeArquivo = "albums\\" + id + ".jpg";
+        Path caminhoImagem = Paths.get(this.IMAGES_DIR + nomeArquivo);
+
+        System.out.println(caminhoImagem.toString());
+        
+        try {
+            Files.createDirectories(caminhoImagem.getParent());
+            imagem.transferTo(caminhoImagem.toFile());
+            album.setUrlImagemCapa(nomeArquivo.toString());
+            albumRepository.save(album);
+            return new ResponseEntity<>("Imagem do álbum atualizada com sucesso", HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Erro ao salvar a imagem", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     
     

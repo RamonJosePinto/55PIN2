@@ -175,7 +175,7 @@ public class UsuarioResource {
         try {
             Files.createDirectories(caminhoImagem.getParent());
             imagem.transferTo(caminhoImagem.toFile());
-            usuario.setCaminhoImagem(caminhoImagem.toString());
+            usuario.setCaminhoImagem(nomeArquivo.toString());
             usuarioRepository.save(usuario);
             return new ResponseEntity<>("Imagem do perfil atualizada com sucesso", HttpStatus.OK);
         } catch (IOException e) {
