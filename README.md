@@ -2,7 +2,7 @@ Página do projeto no GitHub:
   https://github.com/RamonJosePinto/55PIN2
 
 Vídeo da apresentação do sistema: 
-  https://youtu.be/SLKTkae3q0w
+  https://youtu.be/XE1jB6n4sjo (link corrigido)
 
 Documento de especificação do sistema e requisitos (feito para 55PIN2, mas pode esclarecer o propósito do sistema):
   https://drive.google.com/file/d/1Ohv4RdQnXVqcxiCT9uiv8UEOOxjaUTC1/view?usp=drive_link
