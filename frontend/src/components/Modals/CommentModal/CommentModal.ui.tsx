@@ -47,7 +47,6 @@ const CommentModal: React.FC<{
             usuario: userId,
             texto: data.texto,
         };
-        console.log({dataFormatted});
         postComment(dataFormatted);
         onClose();
     };

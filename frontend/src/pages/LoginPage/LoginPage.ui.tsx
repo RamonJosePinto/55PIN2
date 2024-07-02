@@ -18,7 +18,6 @@ const LoginPage: React.FC = () => {
     const {setUser} = context;
 
     const onSubmit: SubmitHandler<IFormInput> = data => {
-        console.log(data);
         login(data.username, data.password)
             .then(res => {
                 setUser(res.data);

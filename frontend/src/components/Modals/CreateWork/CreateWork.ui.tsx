@@ -25,9 +25,10 @@ import {
 } from "./CreateWork.styles";
 import closeIcon from "../../../assets/icons/icon-close.svg";
 import AddDiscographyModal from "../AddDiscography/AddDiscographyModal.ui";
-import {postAlbum, postPerformance, validateAuthors} from "../../../api/ApiService";
+import {postAlbum, postPerformance, uploadAlbumImage, validateAuthors} from "../../../api/ApiService";
 import {UserContext} from "../../../hooks/UserContext";
 import {Popup, PopupMessage} from "../../../pages/RegisterPage/RegisterPage.styles";
+import {EditImage} from "../UserEditForm/EditFormModal.styles";
 
 interface CreateWorkModalProps {
     isOpen: boolean;
@@ -56,6 +57,7 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
     const {register: registerAlbum, handleSubmit: handleSubmitAlbum, reset: resetAlbumForm} = useForm<AlbumFormInputs>();
     const {register: registerPerformance, handleSubmit: handleSubmitPerformance, reset: resetPerformanceForm} = useForm<PerformanceFormInputs>();
     const [showPopup, setShowPopup] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const {user} = useContext(UserContext);
 
     const handleAlbumSubmit: SubmitHandler<AlbumFormInputs> = async data => {
@@ -71,8 +73,13 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                 genero: generosArray,
                 faixas: discographies,
             };
-            console.log(dataFormatted);
-            await postAlbum(dataFormatted);
+
+            await postAlbum(dataFormatted).then(res => {
+                if (selectedImage) {
+                    uploadAlbumImage(res.data.id, selectedImage);
+                }
+            });
+
             resetForms();
             onClose();
         } catch (error) {
@@ -126,6 +133,12 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
         }, 3000);
     };
 
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setSelectedImage(e.target.files[0]);
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -158,6 +171,11 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                             <FormContent onSubmit={handleSubmitAlbum(handleAlbumSubmit)}>
                                 <InputRow>
                                     <div style={{flex: 1}}>
+                                        <FormGroup style={{marginBottom: "20px"}}>
+                                            <EditImage>
+                                                <input type="file" accept="image/*" onChange={handleImageChange} />
+                                            </EditImage>
+                                        </FormGroup>
                                         <FormGroup>
                                             <FieldLabel>Nome</FieldLabel>
                                             <InputForm
@@ -179,9 +197,6 @@ const CreateWorkModal: React.FC<CreateWorkModalProps> = ({isOpen, onClose}) => {
                                             <InputForm {...registerAlbum("autores", {required: true})} placeholder="Digite os nomes dos autores separados por vírgula" />
                                         </FormGroup>
                                     </div>
-                                    <ImageUploadContainer>
-                                        <ImageUploadButton>Upload da Capa</ImageUploadButton>
-                                    </ImageUploadContainer>
                                 </InputRow>
                                 <ButtonsRow>
                                     <ButtonConfirm type="submit">Confirmar</ButtonConfirm>

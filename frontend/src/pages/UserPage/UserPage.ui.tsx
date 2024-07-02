@@ -35,7 +35,6 @@ import {
     TabsList,
     ProfileDefaultIcon,
 } from "./UserPage.styles";
-import mockData from "../../mocks/user.mock.json";
 import ReturnToPrevPage from "../../components/Navigate/ReturnToPrevPage.ui";
 import EditFormModal from "../../components/Modals/UserEditForm/EditFormModal.ui";
 import CreateWorkModal from "../../components/Modals/CreateWork/CreateWork.ui";
@@ -44,7 +43,6 @@ import defaultAlbumImage from "../../assets/images/default-cover.png";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
 import {getUser, getUserAlbuns, getUserPerformances, postAlbum} from "../../api/ApiService";
 import {useNavigate} from "react-router-dom";
-import teste from "../../assets/userImages/users/1.jpg";
 
 const UserPage: React.FC = () => {
     const [userData, setUserData] = useState<any>(null);
@@ -53,8 +51,6 @@ const UserPage: React.FC = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateWorkModalOpen, setIsCreateWorkModalOpen] = useState(false);
     const {user} = useContext(UserContext);
-
-    console.log({userData});
 
     useEffect(() => {
         getUser(user.usuario.id).then((res: any) => {
@@ -99,7 +95,6 @@ const UserPage: React.FC = () => {
             autores: [{id: userData.id}],
             ...data,
         };
-        console.log({dataFormated});
         postAlbum(dataFormated)
             .then(response => {
                 console.log("Album criado com sucesso", response);
@@ -216,7 +211,7 @@ const UserPage: React.FC = () => {
                                     <div key={index}>
                                         <AlbumImage
                                             onClick={() => navigate(`/obra/${album.id}`, {state: {type: activeTab === "Albuns" ? "Albuns" : "Performances"}})}
-                                            src={album.urlImagemCapa || defaultAlbumImage}
+                                            src={album.urlImagemCapa ? `/src/assets/userImages/${album.urlImagemCapa}` : defaultAlbumImage}
                                             alt={album.titulo}
                                         />
                                         <AlbumTitle>{album.titulo}</AlbumTitle>

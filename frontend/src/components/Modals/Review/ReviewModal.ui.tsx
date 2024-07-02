@@ -60,14 +60,12 @@ const ReviewModal: React.FC<{
     });
 
     const onSubmit: SubmitHandler<FormInputs> = data => {
-        console.log(type);
         if (type === "Albuns") {
             const dataFormatted = {
                 reviewer: userId,
                 obra: albumId,
                 ...data,
             };
-            console.log({dataFormatted});
             postAlbumReview(dataFormatted);
         } else {
             const dataFormatted = {
@@ -75,7 +73,6 @@ const ReviewModal: React.FC<{
                 performance: albumId,
                 ...data,
             };
-            console.log({dataFormatted});
             postPerformanceReview(dataFormatted);
         }
         onClose();

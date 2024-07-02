@@ -73,8 +73,6 @@ const WorkPage = () => {
 
     const type = location.state.type;
 
-    console.log({type});
-
     const handleReviewClick = () => {
         setIsReviewModalOpen(true);
     };
@@ -185,7 +183,7 @@ const WorkPage = () => {
                 <ReturnToPrevPage />
                 <WorkInfoContainer>
                     <WorkProfile>
-                        <WorkPicture src={workData.urlImagemCapa && workData.urlImagemCapa !== null ? "/" + workData.urlImagemCapa : defaultAlbumImage} alt="Profile" />
+                        <WorkPicture src={workData.urlImagemCapa ? `/src/assets/userImages/${workData.urlImagemCapa}` : defaultAlbumImage} alt="Profile" />
                         <WorkInfo>
                             <WorkName>{workData?.titulo}</WorkName>
                             <WorkType color={"#398ecc"}>{workData?.tipo || "Performance"}</WorkType>

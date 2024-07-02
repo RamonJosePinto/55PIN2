@@ -41,8 +41,6 @@ const AddDiscographyModal: React.FC<AddDiscographyModalProps> = ({isOpen, onClos
     const {register, handleSubmit, reset} = useForm<FormInputs>();
     const [discography, setDiscography] = useState<any[]>([]);
 
-    console.log({discography});
-
     const onSubmit: SubmitHandler<FormInputs> = data => {
         setDiscography([...discography, data]);
         reset();

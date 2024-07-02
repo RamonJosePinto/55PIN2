@@ -17,8 +17,8 @@ import {
     InputRow,
     ButtonsRow,
     ErrorMessage,
-    Popup, // Import the styled popup component
-    PopupMessage, // Import the styled popup message component
+    Popup,
+    PopupMessage,
 } from "./RegisterPage.styles";
 import {useNavigate} from "react-router-dom";
 import {postUser} from "../../api/ApiService";
@@ -56,13 +56,12 @@ const RegisterPage: React.FC = () => {
     const [showPopup, setShowPopup] = useState(false);
 
     const onSubmit: SubmitHandler<IFormInput> = async data => {
-        console.log(data);
         await postUser(data)
             .then(() => {
                 setShowPopup(true);
                 setTimeout(() => {
                     setShowPopup(false);
-                    navigate("/meus-dados");
+                    navigate("/");
                 }, 3000);
             })
             .catch(res => {
@@ -111,7 +110,7 @@ const RegisterPage: React.FC = () => {
                                 <InputTitle>Tipo de usuário</InputTitle>
                                 <Input as="select" {...register("userType")} className="form-select">
                                     <option value="ARTISTA">ARTISTA</option>
-                                    <option value="REVIEWER">Business Owner</option>
+                                    <option value="REVIEWER">REVIEWER</option>
                                 </Input>
                                 {errors.userType && <ErrorMessage>{errors.userType.message}</ErrorMessage>}
                             </FormGroup>

@@ -19,7 +19,6 @@ import SearchIcon from "../../assets/icons/icon-search.svg";
 import {UserContext} from "../../hooks/UserContext";
 import defaultUserIcon from "../../assets/images/default-user.jfif";
 import {logout} from "../../api/ApiService";
-import teste from "../../assets/userImages/users/2.jpg";
 
 const TopBar: React.FC = () => {
     const [isNotificatioModalOpen, setIsNotificationModalOpen] = useState(false);
@@ -40,8 +39,6 @@ const TopBar: React.FC = () => {
     const toggleNotificationModal = () => {
         setIsNotificationModalOpen(!isNotificatioModalOpen);
     };
-
-    console.log(user.usuario);
 
     return (
         <TopBarContainer>

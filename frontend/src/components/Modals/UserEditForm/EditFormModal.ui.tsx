@@ -56,11 +56,10 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}
         getUser(userData?.usuario.id)
             .then(res => {
                 setUserFormData(res.data);
-                console.log(res);
             })
             .catch(err => console.log(err));
 
-        reset(userFormData); // Reset form with mock data when modal opens
+        reset(userFormData);
     }, [reset, isOpen]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,8 +81,6 @@ const EditFormModal: React.FC<EditFormModalProps> = ({isOpen, onClose, userData}
             window.alert("Erro ao atualizar perfil");
         }
     };
-
-    console.log({userFormData});
 
     if (!isOpen) return null;
 
